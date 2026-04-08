@@ -1,0 +1,56 @@
+{% extends 'base.html' %}
+
+{% block title %}Home - E-Governance Portal{% endblock %}
+
+{% block content %}
+
+<!-- ====== HERO SECTION ====== -->
+<div style="text-align: center; padding: 60px 20px; background-color: white; border-radius: 10px; margin-bottom: 40px; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
+    
+    <h1 style="font-size: 36px; color: #1a3c6e; margin-bottom: 15px;">
+        🏛️ Welcome to E-Governance Portal
+    </h1>
+    
+    <p style="font-size: 18px; color: #555; margin-bottom: 30px;">
+        Submit complaints, request services, and track their status — all online.
+    </p>
+
+    <a href="/register" class="btn btn-primary" style="margin-right: 15px;">
+        📝 Register as Citizen
+    </a>
+    <a href="/login" class="btn btn-success">
+        🔐 Login to Portal
+    </a>
+</div>
+
+<!-- ====== FEATURES SECTION ====== -->
+<h2 style="text-align:center; color: #1a3c6e; margin-bottom: 30px;">
+    What You Can Do
+</h2>
+
+<div style="display: flex; gap: 20px; flex-wrap: wrap; justify-content: center;">
+
+    <!-- Feature 1 -->
+    <div style="background: white; border-radius: 10px; padding: 30px; width: 300px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); text-align: center;">
+        <div style="font-size: 40px;">📋</div>
+        <h3 style="margin: 15px 0 10px; color: #1a3c6e;">Submit Complaints</h3>
+        <p style="color: #666;">Easily register your complaints or service requests online in minutes.</p>
+    </div>
+
+    <!-- Feature 2 -->
+    <div style="background: white; border-radius: 10px; padding: 30px; width: 300px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); text-align: center;">
+        <div style="font-size: 40px;">🔍</div>
+        <h3 style="margin: 15px 0 10px; color: #1a3c6e;">Track Status</h3>
+        <p style="color: #666;">Monitor the progress of your complaint in real-time from anywhere.</p>
+    </div>
+
+    <!-- Feature 3 -->
+    <div style="background: white; border-radius: 10px; padding: 30px; width: 300px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); text-align: center;">
+        <div style="font-size: 40px;">✅</div>
+        <h3 style="margin: 15px 0 10px; color: #1a3c6e;">Get Resolved</h3>
+        <p style="color: #666;">Admins review and resolve your complaints with full transparency.</p>
+    </div>
+
+</div>
+
+{% endblock %}
