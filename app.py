@@ -60,6 +60,13 @@ def init_db():
 def home():
     return render_template('index.html')
 
+# ----------------------------------------
+# ABOUT ROUTE
+# ----------------------------------------
+@app.route('/about')
+def about():
+    return render_template('about.html')
+
 
 # ----------------------------------------
 # REGISTER ROUTE
@@ -288,6 +295,13 @@ def update_status():
 
     flash(f'✅ Complaint status updated to "{new_status}"!', 'success')
     return redirect(url_for('admin_dashboard'))
+
+# ----------------------------------------
+# 404 ERROR PAGE
+# ----------------------------------------
+@app.errorhandler(404)
+def page_not_found(e):
+    return render_template('404.html'), 404
 
 
 # ----------------------------------------

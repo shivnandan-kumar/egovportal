@@ -117,10 +117,29 @@
     <nav class="navbar">
         <a href="/" class="logo">🏛️ E-Governance Portal</a>
         <div class="nav-links">
-            <a href="/">Home</a>
-            <a href="/register">Register</a>
-            <a href="/login">Login</a>
-        </div>
+    <a href="/">Home</a>
+    <a href="/about">About</a>
+
+    {% if session.user_id %}
+
+        {% if session.role == 'admin' %}
+            <!-- Admin Links -->
+            <a href="/admin">🛡️ Admin Panel</a>
+        {% else %}
+            <!-- User Links -->
+            <a href="/dashboard">📋 My Complaints</a>
+            <a href="/submit-complaint">📝 Submit Complaint</a>
+        {% endif %}
+
+        <a href="/logout">🚪 Logout ({{ session.username }})</a>
+
+    {% else %}
+        <!-- Guest Links -->
+        <a href="/register">Register</a>
+        <a href="/login">Login</a>
+    {% endif %}
+
+</div>
     </nav>
 
     <!-- ====== FLASH MESSAGES ====== -->
