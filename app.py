@@ -157,9 +157,15 @@ def logout():
 # ----------------------------------------
 @app.route('/dashboard')
 def user_dashboard():
+    # Not logged in
     if 'user_id' not in session:
         flash('❌ Please login first!', 'danger')
         return redirect(url_for('login'))
+
+    # Logged in but is an admin - redirect to admin panel
+    if session['role'] == 'admin':
+        flash('⚠️ Admins cannot access the user dashboard!', 'danger')
+        return redirect(url_for('admin_dashboard'))
 
     # Get all complaints for this user
     conn   = sqlite3.connect('database.db')
@@ -222,14 +228,66 @@ def submit_complaint():
 
 
 # ----------------------------------------
-# ADMIN DASHBOARD (placeholder for now)
+# ADMIN DASHBOARD
 # ----------------------------------------
 @app.route('/admin')
 def admin_dashboard():
     if 'user_id' not in session or session['role'] != 'admin':
         flash('❌ Access denied!', 'danger')
         return redirect(url_for('login'))
-    return f"Welcome Admin {session['username']}! Admin Dashboard coming soon."
+
+    # Get ALL complaints with username of citizen
+    conn   = sqlite3.connect('database.db')
+    cursor = conn.cursor()
+
+    cursor.execute('''
+        SELECT complaints.*, users.username
+        FROM complaints
+        JOIN users ON complaints.user_id = users.id
+        ORDER BY complaints.id DESC
+    ''')
+    complaints = cursor.fetchall()
+    conn.close()
+
+    # Count complaints by status
+    total      = len(complaints)
+    pending    = sum(1 for c in complaints if c[5] == 'Pending')
+    inprogress = sum(1 for c in complaints if c[5] == 'In Progress')
+    resolved   = sum(1 for c in complaints if c[5] == 'Resolved')
+
+    return render_template('admin_dashboard.html',
+                           complaints = complaints,
+                           total      = total,
+                           pending    = pending,
+                           inprogress = inprogress,
+                           resolved   = resolved)
+
+
+# ----------------------------------------
+# UPDATE COMPLAINT STATUS ROUTE
+# ----------------------------------------
+@app.route('/update-status', methods=['POST'])
+def update_status():
+    if 'user_id' not in session or session['role'] != 'admin':
+        flash('❌ Access denied!', 'danger')
+        return redirect(url_for('login'))
+
+    # Get data from form
+    complaint_id = request.form['complaint_id']
+    new_status   = request.form['status']
+
+    # Update status in database
+    conn   = sqlite3.connect('database.db')
+    cursor = conn.cursor()
+
+    cursor.execute('UPDATE complaints SET status = ? WHERE id = ?',
+                   (new_status, complaint_id))
+
+    conn.commit()
+    conn.close()
+
+    flash(f'✅ Complaint status updated to "{new_status}"!', 'success')
+    return redirect(url_for('admin_dashboard'))
 
 
 # ----------------------------------------
