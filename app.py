@@ -183,6 +183,43 @@ def user_dashboard():
                            inprogress = inprogress,
                            resolved   = resolved)
 
+# ----------------------------------------
+# SUBMIT COMPLAINT ROUTE
+# ----------------------------------------
+@app.route('/submit-complaint', methods=['GET', 'POST'])
+def submit_complaint():
+    if 'user_id' not in session:
+        flash('❌ Please login first!', 'danger')
+        return redirect(url_for('login'))
+
+    if request.method == 'POST':
+
+        # Get data from the form
+        title       = request.form['title']
+        category    = request.form['category']
+        description = request.form['description']
+
+        # Get current date
+        from datetime import datetime
+        date_submitted = datetime.now().strftime('%Y-%m-%d %H:%M')
+
+        # Save complaint to database
+        conn   = sqlite3.connect('database.db')
+        cursor = conn.cursor()
+
+        cursor.execute('''
+            INSERT INTO complaints (user_id, title, description, category, status, date_submitted)
+            VALUES (?, ?, ?, ?, 'Pending', ?)
+        ''', (session['user_id'], title, description, category, date_submitted))
+
+        conn.commit()
+        conn.close()
+
+        flash('✅ Complaint submitted successfully!', 'success')
+        return redirect(url_for('user_dashboard'))
+
+    return render_template('submit_complaint.html')
+
 
 # ----------------------------------------
 # ADMIN DASHBOARD (placeholder for now)
