@@ -153,14 +153,35 @@ def logout():
 
 
 # ----------------------------------------
-# USER DASHBOARD (placeholder for now)
+# USER DASHBOARD
 # ----------------------------------------
 @app.route('/dashboard')
 def user_dashboard():
     if 'user_id' not in session:
         flash('❌ Please login first!', 'danger')
         return redirect(url_for('login'))
-    return f"Welcome {session['username']}! User Dashboard coming soon."
+
+    # Get all complaints for this user
+    conn   = sqlite3.connect('database.db')
+    cursor = conn.cursor()
+
+    cursor.execute('SELECT * FROM complaints WHERE user_id = ? ORDER BY id DESC',
+                   (session['user_id'],))
+    complaints = cursor.fetchall()
+    conn.close()
+
+    # Count complaints by status
+    total      = len(complaints)
+    pending    = sum(1 for c in complaints if c[5] == 'Pending')
+    inprogress = sum(1 for c in complaints if c[5] == 'In Progress')
+    resolved   = sum(1 for c in complaints if c[5] == 'Resolved')
+
+    return render_template('dashboard.html',
+                           complaints = complaints,
+                           total      = total,
+                           pending    = pending,
+                           inprogress = inprogress,
+                           resolved   = resolved)
 
 
 # ----------------------------------------

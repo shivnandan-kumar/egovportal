@@ -1,0 +1,113 @@
+{% extends 'base.html' %}
+
+{% block title %}My Dashboard - E-Governance Portal{% endblock %}
+
+{% block content %}
+
+<!-- ====== WELCOME SECTION ====== -->
+<div style="background: white; padding: 25px 30px; border-radius: 10px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); margin-bottom: 30px; display: flex; justify-content: space-between; align-items: center;">
+    
+    <div>
+        <h2 style="color: #1a3c6e; margin-bottom: 5px;">
+            👋 Welcome, {{ session.username }}!
+        </h2>
+        <p style="color: #666;">
+            Here you can view and track all your complaints.
+        </p>
+    </div>
+
+    <a href="/submit-complaint" class="btn btn-primary">
+        📝 Submit New Complaint
+    </a>
+
+</div>
+
+<!-- ====== STATS SECTION ====== -->
+<div style="display: flex; gap: 20px; flex-wrap: wrap; margin-bottom: 30px;">
+
+    <!-- Total -->
+    <div style="background: #1a3c6e; color: white; padding: 20px 30px; border-radius: 10px; flex: 1; text-align: center; min-width: 150px;">
+        <div style="font-size: 32px; font-weight: bold;">{{ total }}</div>
+        <div style="font-size: 14px; margin-top: 5px;">Total Complaints</div>
+    </div>
+
+    <!-- Pending -->
+    <div style="background: #ffc107; color: white; padding: 20px 30px; border-radius: 10px; flex: 1; text-align: center; min-width: 150px;">
+        <div style="font-size: 32px; font-weight: bold;">{{ pending }}</div>
+        <div style="font-size: 14px; margin-top: 5px;">Pending</div>
+    </div>
+
+    <!-- In Progress -->
+    <div style="background: #17a2b8; color: white; padding: 20px 30px; border-radius: 10px; flex: 1; text-align: center; min-width: 150px;">
+        <div style="font-size: 32px; font-weight: bold;">{{ inprogress }}</div>
+        <div style="font-size: 14px; margin-top: 5px;">In Progress</div>
+    </div>
+
+    <!-- Resolved -->
+    <div style="background: #28a745; color: white; padding: 20px 30px; border-radius: 10px; flex: 1; text-align: center; min-width: 150px;">
+        <div style="font-size: 32px; font-weight: bold;">{{ resolved }}</div>
+        <div style="font-size: 14px; margin-top: 5px;">Resolved</div>
+    </div>
+
+</div>
+
+<!-- ====== COMPLAINTS TABLE ====== -->
+<div style="background: white; padding: 25px; border-radius: 10px; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
+
+    <h3 style="color: #1a3c6e; margin-bottom: 20px;">📋 My Complaints</h3>
+
+    {% if complaints %}
+    <table style="width: 100%; border-collapse: collapse;">
+        <thead>
+            <tr style="background-color: #1a3c6e; color: white;">
+                <th style="padding: 12px; text-align: left;">#</th>
+                <th style="padding: 12px; text-align: left;">Title</th>
+                <th style="padding: 12px; text-align: left;">Category</th>
+                <th style="padding: 12px; text-align: left;">Date</th>
+                <th style="padding: 12px; text-align: left;">Status</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for complaint in complaints %}
+            <tr style="border-bottom: 1px solid #eee;">
+                <td style="padding: 12px;">{{ complaint[0] }}</td>
+                <td style="padding: 12px;">{{ complaint[2] }}</td>
+                <td style="padding: 12px;">{{ complaint[4] }}</td>
+                <td style="padding: 12px;">{{ complaint[6] }}</td>
+                <td style="padding: 12px;">
+
+                    {% if complaint[5] == 'Pending' %}
+                        <span style="background:#ffc107; color:white; padding:4px 10px; border-radius:20px; font-size:13px;">
+                            ⏳ Pending
+                        </span>
+                    {% elif complaint[5] == 'In Progress' %}
+                        <span style="background:#17a2b8; color:white; padding:4px 10px; border-radius:20px; font-size:13px;">
+                            🔄 In Progress
+                        </span>
+                    {% elif complaint[5] == 'Resolved' %}
+                        <span style="background:#28a745; color:white; padding:4px 10px; border-radius:20px; font-size:13px;">
+                            ✅ Resolved
+                        </span>
+                    {% endif %}
+
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    {% else %}
+    <div style="text-align: center; padding: 40px; color: #888;">
+        <div style="font-size: 50px;">📭</div>
+        <p style="margin-top: 15px; font-size: 16px;">
+            You have not submitted any complaints yet.
+        </p>
+        <a href="/submit-complaint" class="btn btn-primary" style="margin-top: 15px;">
+            📝 Submit Your First Complaint
+        </a>
+    </div>
+    {% endif %}
+
+</div>
+
+{% endblock %}
