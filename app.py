@@ -15,7 +15,7 @@ app.secret_key = 'egovportal_secret_key'
 def init_db():
     """This function creates the database and tables if they don't exist"""
 
-    conn = sqlite3.connect('database.db')  # Creates database.db file
+    conn   = sqlite3.connect('database.db')
     cursor = conn.cursor()
 
     # Create USERS table
@@ -38,8 +38,22 @@ def init_db():
             description TEXT NOT NULL,
             category TEXT NOT NULL,
             status TEXT DEFAULT 'Pending',
+            priority TEXT DEFAULT 'Medium',
             date_submitted TEXT NOT NULL,
             FOREIGN KEY (user_id) REFERENCES users(id)
+        )
+    ''')
+
+    # Create STATUS TIMELINE table
+    cursor.execute('''
+        CREATE TABLE IF NOT EXISTS timeline (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            complaint_id INTEGER NOT NULL,
+            status TEXT NOT NULL,
+            comment TEXT,
+            updated_by TEXT NOT NULL,
+            updated_at TEXT NOT NULL,
+            FOREIGN KEY (complaint_id) REFERENCES complaints(id)
         )
     ''')
 
@@ -220,6 +234,7 @@ def submit_complaint():
         title       = request.form['title']
         category    = request.form['category']
         description = request.form['description']
+        priority    = request.form['priority']
 
         # Get current date
         from datetime import datetime
@@ -230,9 +245,9 @@ def submit_complaint():
         cursor = conn.cursor()
 
         cursor.execute('''
-            INSERT INTO complaints (user_id, title, description, category, status, date_submitted)
-            VALUES (?, ?, ?, ?, 'Pending', ?)
-        ''', (session['user_id'], title, description, category, date_submitted))
+            INSERT INTO complaints (user_id, title, description, category, status, priority, date_submitted)
+            VALUES (?, ?, ?, ?, 'Pending', ?, ?)
+        ''', (session['user_id'], title, description, category, priority, date_submitted))
 
         conn.commit()
         conn.close()

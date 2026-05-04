@@ -6,7 +6,7 @@
 
 <!-- ====== WELCOME SECTION ====== -->
 <div style="background: white; padding: 25px 30px; border-radius: 10px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); margin-bottom: 30px; display: flex; justify-content: space-between; align-items: center;">
-    
+
     <div>
         <h2 style="color: #1a3c6e; margin-bottom: 5px;">
             👋 Welcome, {{ session.username }}!
@@ -63,6 +63,7 @@
                 <th style="padding: 12px; text-align: left;">#</th>
                 <th style="padding: 12px; text-align: left;">Title</th>
                 <th style="padding: 12px; text-align: left;">Category</th>
+                <th style="padding: 12px; text-align: left;">Priority</th>
                 <th style="padding: 12px; text-align: left;">Date</th>
                 <th style="padding: 12px; text-align: left;">Status</th>
             </tr>
@@ -73,9 +74,29 @@
                 <td style="padding: 12px;">{{ complaint[0] }}</td>
                 <td style="padding: 12px;">{{ complaint[2] }}</td>
                 <td style="padding: 12px;">{{ complaint[4] }}</td>
-                <td style="padding: 12px;">{{ complaint[6] }}</td>
-                <td style="padding: 12px;">
 
+                <!-- Priority Column -->
+                <td style="padding: 12px;">
+                    {% if complaint[6] == 'High' %}
+                        <span style="background:#dc3545; color:white; padding:4px 10px; border-radius:20px; font-size:13px;">
+                            🔴 High
+                        </span>
+                    {% elif complaint[6] == 'Medium' %}
+                        <span style="background:#ffc107; color:white; padding:4px 10px; border-radius:20px; font-size:13px;">
+                            🟡 Medium
+                        </span>
+                    {% elif complaint[6] == 'Low' %}
+                        <span style="background:#28a745; color:white; padding:4px 10px; border-radius:20px; font-size:13px;">
+                            🟢 Low
+                        </span>
+                    {% endif %}
+                </td>
+
+                <!-- Date Column -->
+                <td style="padding: 12px;">{{ complaint[7] }}</td>
+
+                <!-- Status Column -->
+                <td style="padding: 12px;">
                     {% if complaint[5] == 'Pending' %}
                         <span style="background:#ffc107; color:white; padding:4px 10px; border-radius:20px; font-size:13px;">
                             ⏳ Pending
@@ -89,8 +110,8 @@
                             ✅ Resolved
                         </span>
                     {% endif %}
-
                 </td>
+
             </tr>
             {% endfor %}
         </tbody>
