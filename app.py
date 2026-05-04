@@ -2,6 +2,7 @@
 # E-Governance Complaint and Service Management Portal
 
 from flask import Flask, render_template, redirect, url_for, flash, request, session
+from werkzeug.security import generate_password_hash, check_password_hash
 import sqlite3
 import os
 
@@ -13,7 +14,7 @@ app.secret_key = 'egovportal_secret_key'
 # ----------------------------------------
 def init_db():
     """This function creates the database and tables if they don't exist"""
-    
+
     conn = sqlite3.connect('database.db')  # Creates database.db file
     cursor = conn.cursor()
 
@@ -42,15 +43,17 @@ def init_db():
         )
     ''')
 
-    # Create a default ADMIN account
+    # Create a default ADMIN account with hashed password
+    admin_password = generate_password_hash('admin123')
     cursor.execute('''
         INSERT OR IGNORE INTO users (username, email, password, role)
-        VALUES ('admin', 'admin@egov.com', 'admin123', 'admin')
-    ''')
+        VALUES ('admin', 'admin@egov.com', ?, 'admin')
+    ''', (admin_password,))
 
     conn.commit()  # Save changes
     conn.close()   # Close connection
     print("✅ Database initialized successfully!")
+
 
 
 # ----------------------------------------
@@ -91,10 +94,13 @@ def register():
             conn   = sqlite3.connect('database.db')
             cursor = conn.cursor()
 
+            # Hash the password before saving
+            hashed_password = generate_password_hash(password)
+
             cursor.execute('''
                 INSERT INTO users (username, email, password, role)
                 VALUES (?, ?, ?, 'user')
-            ''', (username, email, password))
+            ''', (username, email, hashed_password))
 
             conn.commit()
             conn.close()
@@ -120,14 +126,17 @@ def login():
         email    = request.form['email']
         password = request.form['password']
 
-        # Check user in database
+        # Find user by email only first
         conn   = sqlite3.connect('database.db')
         cursor = conn.cursor()
 
-        cursor.execute('SELECT * FROM users WHERE email = ? AND password = ?',
-                       (email, password))
+        cursor.execute('SELECT * FROM users WHERE email = ?', (email,))
         user = cursor.fetchone()
         conn.close()
+
+        # Now check if password matches the hash
+        if user and not check_password_hash(user[3], password):
+            user = None
 
         if user:
             # Save user info in session
