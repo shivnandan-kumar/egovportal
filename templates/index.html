@@ -5,52 +5,162 @@
 {% block content %}
 
 <!-- ====== HERO SECTION ====== -->
-<div style="text-align: center; padding: 60px 20px; background-color: white; border-radius: 10px; margin-bottom: 40px; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
-    
-    <h1 style="font-size: 36px; color: #1a3c6e; margin-bottom: 15px;">
-        🏛️ Welcome to E-Governance Portal
-    </h1>
-    
-    <p style="font-size: 18px; color: #555; margin-bottom: 30px;">
-        Submit complaints, request services, and track their status — all online.
-    </p>
+<div style="background: linear-gradient(135deg, #1a3c6e 0%, #2563ab 50%, #3b82f6 100%); border-radius: 16px; padding: 80px 40px; text-align: center; margin-bottom: 40px; position: relative; overflow: hidden; box-shadow: 0 10px 40px rgba(26,60,110,0.3);">
 
-    <a href="/register" class="btn btn-primary" style="margin-right: 15px;">
-        📝 Register as Citizen
-    </a>
-    <a href="/login" class="btn btn-success">
-        🔐 Login to Portal
-    </a>
+    <!-- Background circles for design -->
+    <div style="position: absolute; top: -50px; left: -50px; width: 200px; height: 200px; background: rgba(255,255,255,0.05); border-radius: 50%;"></div>
+    <div style="position: absolute; bottom: -80px; right: -30px; width: 300px; height: 300px; background: rgba(255,255,255,0.05); border-radius: 50%;"></div>
+    <div style="position: absolute; top: 20px; right: 100px; width: 100px; height: 100px; background: rgba(255,255,255,0.05); border-radius: 50%;"></div>
+
+    <!-- Content -->
+    <div style="position: relative; z-index: 1;">
+        <div style="display: inline-block; background: rgba(255,255,255,0.15); padding: 10px 20px; border-radius: 30px; margin-bottom: 25px;">
+            <span style="color: rgba(255,255,255,0.9); font-size: 13px; font-weight: 600; letter-spacing: 1px;">🇮🇳 DIGITAL INDIA INITIATIVE</span>
+        </div>
+
+        <h1 style="font-size: 46px; color: white; margin-bottom: 18px; font-weight: 800; line-height: 1.2; text-shadow: 0 2px 10px rgba(0,0,0,0.2);">
+            🏛️ E-Governance<br>Complaint Portal
+        </h1>
+
+        <p style="font-size: 18px; color: rgba(255,255,255,0.85); margin-bottom: 35px; max-width: 550px; margin-left: auto; margin-right: auto; line-height: 1.6;">
+            Submit complaints, request government services, and track their resolution — all from the comfort of your home.
+        </p>
+
+        <div style="display: flex; gap: 15px; justify-content: center; flex-wrap: wrap;">
+            <a href="/register" style="background: white; color: #1a3c6e; padding: 14px 32px; border-radius: 8px; text-decoration: none; font-weight: 700; font-size: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.2); transition: all 0.2s;">
+                📝 Register as Citizen
+            </a>
+            <a href="/login" style="background: rgba(255,255,255,0.15); color: white; padding: 14px 32px; border-radius: 8px; text-decoration: none; font-weight: 700; font-size: 15px; border: 2px solid rgba(255,255,255,0.4); transition: all 0.2s;">
+                🔐 Login to Portal
+            </a>
+        </div>
+    </div>
+</div>
+
+<!-- ====== STATS BAR ====== -->
+<div style="background: white; border-radius: 12px; padding: 25px 40px; margin-bottom: 40px; box-shadow: 0 2px 15px rgba(0,0,0,0.08); display: flex; justify-content: space-around; flex-wrap: wrap; gap: 20px;">
+
+    <div style="text-align: center;">
+        <div style="font-size: 28px; font-weight: 800; color: #1a3c6e;">500+</div>
+        <div style="font-size: 13px; color: #888; margin-top: 3px;">Complaints Resolved</div>
+    </div>
+
+    <div style="width: 1px; background: #e5e7eb;"></div>
+
+    <div style="text-align: center;">
+        <div style="font-size: 28px; font-weight: 800; color: #1a3c6e;">8+</div>
+        <div style="font-size: 13px; color: #888; margin-top: 3px;">Categories</div>
+    </div>
+
+    <div style="width: 1px; background: #e5e7eb;"></div>
+
+    <div style="text-align: center;">
+        <div style="font-size: 28px; font-weight: 800; color: #1a3c6e;">24/7</div>
+        <div style="font-size: 13px; color: #888; margin-top: 3px;">Online Access</div>
+    </div>
+
+    <div style="width: 1px; background: #e5e7eb;"></div>
+
+    <div style="text-align: center;">
+        <div style="font-size: 28px; font-weight: 800; color: #1a3c6e;">100%</div>
+        <div style="font-size: 13px; color: #888; margin-top: 3px;">Transparent</div>
+    </div>
+
+</div>
+
+<!-- ====== HOW IT WORKS ====== -->
+<div style="text-align: center; margin-bottom: 15px;">
+    <h2 style="font-size: 28px; color: #1a3c6e; font-weight: 800;">How It Works</h2>
+    <p style="color: #888; margin-top: 8px;">Simple 3-step process to get your complaint resolved</p>
+</div>
+
+<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px; margin-bottom: 40px;">
+
+    <!-- Step 1 -->
+    <div style="background: white; border-radius: 12px; padding: 30px; box-shadow: 0 2px 15px rgba(0,0,0,0.08); text-align: center; border-top: 4px solid #1a3c6e;">
+        <div style="width: 60px; height: 60px; background: linear-gradient(135deg, #1a3c6e, #2563ab); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 20px; font-size: 24px;">
+            📝
+        </div>
+        <div style="background: #1a3c6e; color: white; width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 15px; font-size: 13px; font-weight: 700;">1</div>
+        <h3 style="color: #1a3c6e; margin-bottom: 10px; font-size: 18px;">Register & Login</h3>
+        <p style="color: #666; font-size: 14px; line-height: 1.6;">Create your citizen account and login to access the portal securely.</p>
+    </div>
+
+    <!-- Step 2 -->
+    <div style="background: white; border-radius: 12px; padding: 30px; box-shadow: 0 2px 15px rgba(0,0,0,0.08); text-align: center; border-top: 4px solid #2563ab;">
+        <div style="width: 60px; height: 60px; background: linear-gradient(135deg, #2563ab, #3b82f6); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 20px; font-size: 24px;">
+            📤
+        </div>
+        <div style="background: #2563ab; color: white; width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 15px; font-size: 13px; font-weight: 700;">2</div>
+        <h3 style="color: #1a3c6e; margin-bottom: 10px; font-size: 18px;">Submit Complaint</h3>
+        <p style="color: #666; font-size: 14px; line-height: 1.6;">Fill in the complaint form with category, priority, and full description.</p>
+    </div>
+
+    <!-- Step 3 -->
+    <div style="background: white; border-radius: 12px; padding: 30px; box-shadow: 0 2px 15px rgba(0,0,0,0.08); text-align: center; border-top: 4px solid #3b82f6;">
+        <div style="width: 60px; height: 60px; background: linear-gradient(135deg, #16a34a, #22c55e); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 20px; font-size: 24px;">
+            ✅
+        </div>
+        <div style="background: #16a34a; color: white; width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 15px; font-size: 13px; font-weight: 700;">3</div>
+        <h3 style="color: #1a3c6e; margin-bottom: 10px; font-size: 18px;">Track & Get Resolved</h3>
+        <p style="color: #666; font-size: 14px; line-height: 1.6;">Track your complaint status in real-time until it gets fully resolved.</p>
+    </div>
+
 </div>
 
 <!-- ====== FEATURES SECTION ====== -->
-<h2 style="text-align:center; color: #1a3c6e; margin-bottom: 30px;">
-    What You Can Do
-</h2>
+<div style="text-align: center; margin-bottom: 15px;">
+    <h2 style="font-size: 28px; color: #1a3c6e; font-weight: 800;">Key Features</h2>
+    <p style="color: #888; margin-top: 8px;">Everything you need in one place</p>
+</div>
 
-<div style="display: flex; gap: 20px; flex-wrap: wrap; justify-content: center;">
+<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 20px; margin-bottom: 40px;">
 
-    <!-- Feature 1 -->
-    <div style="background: white; border-radius: 10px; padding: 30px; width: 300px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); text-align: center;">
-        <div style="font-size: 40px;">📋</div>
-        <h3 style="margin: 15px 0 10px; color: #1a3c6e;">Submit Complaints</h3>
-        <p style="color: #666;">Easily register your complaints or service requests online in minutes.</p>
+    <div style="background: white; border-radius: 12px; padding: 25px; box-shadow: 0 2px 15px rgba(0,0,0,0.08); display: flex; align-items: flex-start; gap: 15px;">
+        <div style="font-size: 28px; min-width: 40px;">🔐</div>
+        <div>
+            <h4 style="color: #1a3c6e; margin-bottom: 6px;">Secure Login</h4>
+            <p style="color: #666; font-size: 13px; line-height: 1.5;">Password encrypted with advanced hashing for your security.</p>
+        </div>
     </div>
 
-    <!-- Feature 2 -->
-    <div style="background: white; border-radius: 10px; padding: 30px; width: 300px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); text-align: center;">
-        <div style="font-size: 40px;">🔍</div>
-        <h3 style="margin: 15px 0 10px; color: #1a3c6e;">Track Status</h3>
-        <p style="color: #666;">Monitor the progress of your complaint in real-time from anywhere.</p>
+    <div style="background: white; border-radius: 12px; padding: 25px; box-shadow: 0 2px 15px rgba(0,0,0,0.08); display: flex; align-items: flex-start; gap: 15px;">
+        <div style="font-size: 28px; min-width: 40px;">🚨</div>
+        <div>
+            <h4 style="color: #1a3c6e; margin-bottom: 6px;">Priority System</h4>
+            <p style="color: #666; font-size: 13px; line-height: 1.5;">Mark complaints as Low, Medium or High priority.</p>
+        </div>
     </div>
 
-    <!-- Feature 3 -->
-    <div style="background: white; border-radius: 10px; padding: 30px; width: 300px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); text-align: center;">
-        <div style="font-size: 40px;">✅</div>
-        <h3 style="margin: 15px 0 10px; color: #1a3c6e;">Get Resolved</h3>
-        <p style="color: #666;">Admins review and resolve your complaints with full transparency.</p>
+    <div style="background: white; border-radius: 12px; padding: 25px; box-shadow: 0 2px 15px rgba(0,0,0,0.08); display: flex; align-items: flex-start; gap: 15px;">
+        <div style="font-size: 28px; min-width: 40px;">📊</div>
+        <div>
+            <h4 style="color: #1a3c6e; margin-bottom: 6px;">Live Tracking</h4>
+            <p style="color: #666; font-size: 13px; line-height: 1.5;">Track complaint status from Pending to Resolved.</p>
+        </div>
     </div>
 
+    <div style="background: white; border-radius: 12px; padding: 25px; box-shadow: 0 2px 15px rgba(0,0,0,0.08); display: flex; align-items: flex-start; gap: 15px;">
+        <div style="font-size: 28px; min-width: 40px;">🛡️</div>
+        <div>
+            <h4 style="color: #1a3c6e; margin-bottom: 6px;">Admin Control</h4>
+            <p style="color: #666; font-size: 13px; line-height: 1.5;">Dedicated admin panel to manage all citizen complaints.</p>
+        </div>
+    </div>
+
+</div>
+
+<!-- ====== CTA SECTION ====== -->
+<div style="background: linear-gradient(135deg, #1a3c6e 0%, #2563ab 100%); border-radius: 16px; padding: 50px 40px; text-align: center; box-shadow: 0 10px 40px rgba(26,60,110,0.3); margin-bottom: 20px;">
+    <h2 style="color: white; font-size: 28px; font-weight: 800; margin-bottom: 12px;">
+        Ready to Submit Your Complaint?
+    </h2>
+    <p style="color: rgba(255,255,255,0.8); margin-bottom: 25px; font-size: 15px;">
+        Join thousands of citizens already using our portal
+    </p>
+    <a href="/register" style="background: white; color: #1a3c6e; padding: 14px 36px; border-radius: 8px; text-decoration: none; font-weight: 700; font-size: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.2);">
+        🚀 Get Started Now
+    </a>
 </div>
 
 {% endblock %}
