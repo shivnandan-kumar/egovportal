@@ -4,126 +4,108 @@
 
 {% block content %}
 
-<!-- ====== WELCOME SECTION ====== -->
-<div style="background: white; padding: 25px 30px; border-radius: 10px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); margin-bottom: 30px; display: flex; justify-content: space-between; align-items: center;">
-
+<!-- ====== WELCOME BANNER ====== -->
+<div style="background: linear-gradient(135deg, #1a3c6e 0%, #2563ab 100%); border-radius: 16px; padding: 30px 35px; margin-bottom: 25px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 4px 20px rgba(26,60,110,0.3); flex-wrap: wrap; gap: 15px;">
     <div>
-        <h2 style="color: #1a3c6e; margin-bottom: 5px;">
+        <h2 style="color: white; font-size: 24px; font-weight: 800; margin-bottom: 5px;">
             👋 Welcome, {{ session.username }}!
         </h2>
-        <p style="color: #666;">
-            Here you can view and track all your complaints.
+        <p style="color: rgba(255,255,255,0.8); font-size: 14px;">
+            🏛️ E-Governance Portal — Citizen Dashboard
         </p>
     </div>
-
-    <a href="/submit-complaint" class="btn btn-primary">
+    <a href="/submit-complaint" class="btn" style="background: white; color: #1a3c6e; font-weight: 700; padding: 12px 24px; font-size: 14px;">
         📝 Submit New Complaint
     </a>
-
 </div>
 
 <!-- ====== STATS SECTION ====== -->
-<div style="display: flex; gap: 20px; flex-wrap: wrap; margin-bottom: 30px;">
-
-    <!-- Total -->
-    <div style="background: #1a3c6e; color: white; padding: 20px 30px; border-radius: 10px; flex: 1; text-align: center; min-width: 150px;">
-        <div style="font-size: 32px; font-weight: bold;">{{ total }}</div>
-        <div style="font-size: 14px; margin-top: 5px;">Total Complaints</div>
+<div class="stats-grid">
+    <div class="stat-card stat-blue">
+        <div class="stat-number">{{ total }}</div>
+        <div class="stat-label">📋 Total Complaints</div>
     </div>
-
-    <!-- Pending -->
-    <div style="background: #ffc107; color: white; padding: 20px 30px; border-radius: 10px; flex: 1; text-align: center; min-width: 150px;">
-        <div style="font-size: 32px; font-weight: bold;">{{ pending }}</div>
-        <div style="font-size: 14px; margin-top: 5px;">Pending</div>
+    <div class="stat-card stat-yellow">
+        <div class="stat-number">{{ pending }}</div>
+        <div class="stat-label">⏳ Pending</div>
     </div>
-
-    <!-- In Progress -->
-    <div style="background: #17a2b8; color: white; padding: 20px 30px; border-radius: 10px; flex: 1; text-align: center; min-width: 150px;">
-        <div style="font-size: 32px; font-weight: bold;">{{ inprogress }}</div>
-        <div style="font-size: 14px; margin-top: 5px;">In Progress</div>
+    <div class="stat-card stat-teal">
+        <div class="stat-number">{{ inprogress }}</div>
+        <div class="stat-label">🔄 In Progress</div>
     </div>
-
-    <!-- Resolved -->
-    <div style="background: #28a745; color: white; padding: 20px 30px; border-radius: 10px; flex: 1; text-align: center; min-width: 150px;">
-        <div style="font-size: 32px; font-weight: bold;">{{ resolved }}</div>
-        <div style="font-size: 14px; margin-top: 5px;">Resolved</div>
+    <div class="stat-card stat-green">
+        <div class="stat-number">{{ resolved }}</div>
+        <div class="stat-label">✅ Resolved</div>
     </div>
-
 </div>
 
 <!-- ====== COMPLAINTS TABLE ====== -->
-<div style="background: white; padding: 25px; border-radius: 10px; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
-
-    <h3 style="color: #1a3c6e; margin-bottom: 20px;">📋 My Complaints</h3>
+<div class="card">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; flex-wrap: wrap; gap: 10px;">
+        <h3 style="color: #1a3c6e; font-size: 18px; font-weight: 700;">
+            📋 My Complaints
+        </h3>
+        <a href="/submit-complaint" class="btn btn-primary" style="font-size: 13px; padding: 8px 16px;">
+            + New Complaint
+        </a>
+    </div>
 
     {% if complaints %}
-    <table style="width: 100%; border-collapse: collapse;">
-        <thead>
-            <tr style="background-color: #1a3c6e; color: white;">
-                <th style="padding: 12px; text-align: left;">#</th>
-                <th style="padding: 12px; text-align: left;">Title</th>
-                <th style="padding: 12px; text-align: left;">Category</th>
-                <th style="padding: 12px; text-align: left;">Priority</th>
-                <th style="padding: 12px; text-align: left;">Date</th>
-                <th style="padding: 12px; text-align: left;">Status</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for complaint in complaints %}
-            <tr style="border-bottom: 1px solid #eee;">
-                <td style="padding: 12px;">{{ complaint[0] }}</td>
-                <td style="padding: 12px;">{{ complaint[2] }}</td>
-                <td style="padding: 12px;">{{ complaint[4] }}</td>
-
-                <!-- Priority Column -->
-                <td style="padding: 12px;">
-                    {% if complaint[6] == 'High' %}
-                        <span style="background:#dc3545; color:white; padding:4px 10px; border-radius:20px; font-size:13px;">
-                            🔴 High
+    <div class="table-wrapper">
+        <table>
+            <thead>
+                <tr>
+                    <th>#</th>
+                    <th>Title</th>
+                    <th>Category</th>
+                    <th>Priority</th>
+                    <th>Date</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for complaint in complaints %}
+                <tr>
+                    <td style="font-weight: 600; color: #1a3c6e;">{{ complaint[0] }}</td>
+                    <td style="font-weight: 500;">{{ complaint[2] }}</td>
+                    <td>
+                        <span style="background: #eff6ff; color: #1d4ed8; padding: 4px 10px; border-radius: 6px; font-size: 12px; font-weight: 600;">
+                            {{ complaint[4] }}
                         </span>
-                    {% elif complaint[6] == 'Medium' %}
-                        <span style="background:#ffc107; color:white; padding:4px 10px; border-radius:20px; font-size:13px;">
-                            🟡 Medium
-                        </span>
-                    {% elif complaint[6] == 'Low' %}
-                        <span style="background:#28a745; color:white; padding:4px 10px; border-radius:20px; font-size:13px;">
-                            🟢 Low
-                        </span>
-                    {% endif %}
-                </td>
-
-                <!-- Date Column -->
-                <td style="padding: 12px;">{{ complaint[7] }}</td>
-
-                <!-- Status Column -->
-                <td style="padding: 12px;">
-                    {% if complaint[5] == 'Pending' %}
-                        <span style="background:#ffc107; color:white; padding:4px 10px; border-radius:20px; font-size:13px;">
-                            ⏳ Pending
-                        </span>
-                    {% elif complaint[5] == 'In Progress' %}
-                        <span style="background:#17a2b8; color:white; padding:4px 10px; border-radius:20px; font-size:13px;">
-                            🔄 In Progress
-                        </span>
-                    {% elif complaint[5] == 'Resolved' %}
-                        <span style="background:#28a745; color:white; padding:4px 10px; border-radius:20px; font-size:13px;">
-                            ✅ Resolved
-                        </span>
-                    {% endif %}
-                </td>
-
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table>
+                    </td>
+                    <td>
+                        {% if complaint[6] == 'High' %}
+                            <span class="badge badge-high">🔴 High</span>
+                        {% elif complaint[6] == 'Medium' %}
+                            <span class="badge badge-medium">🟡 Medium</span>
+                        {% elif complaint[6] == 'Low' %}
+                            <span class="badge badge-low">🟢 Low</span>
+                        {% endif %}
+                    </td>
+                    <td style="color: #888; font-size: 13px;">{{ complaint[7] }}</td>
+                    <td>
+                        {% if complaint[5] == 'Pending' %}
+                            <span class="badge badge-pending">⏳ Pending</span>
+                        {% elif complaint[5] == 'In Progress' %}
+                            <span class="badge badge-progress">🔄 In Progress</span>
+                        {% elif complaint[5] == 'Resolved' %}
+                            <span class="badge badge-resolved">✅ Resolved</span>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
 
     {% else %}
-    <div style="text-align: center; padding: 40px; color: #888;">
-        <div style="font-size: 50px;">📭</div>
-        <p style="margin-top: 15px; font-size: 16px;">
+    <div style="text-align: center; padding: 60px 20px;">
+        <div style="font-size: 70px; margin-bottom: 15px;">📭</div>
+        <h3 style="color: #1a3c6e; margin-bottom: 10px;">No Complaints Yet</h3>
+        <p style="color: #888; margin-bottom: 25px; font-size: 14px;">
             You have not submitted any complaints yet.
         </p>
-        <a href="/submit-complaint" class="btn btn-primary" style="margin-top: 15px;">
+        <a href="/submit-complaint" class="btn btn-primary">
             📝 Submit Your First Complaint
         </a>
     </div>
