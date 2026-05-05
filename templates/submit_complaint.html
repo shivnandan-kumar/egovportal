@@ -4,88 +4,121 @@
 
 {% block content %}
 
-<div style="max-width: 650px; margin: 0 auto; background: white; padding: 40px; border-radius: 10px; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
+<div style="max-width: 750px; margin: 0 auto;">
 
-    <h2 style="text-align: center; color: #1a3c6e; margin-bottom: 25px;">
-        📝 Submit a Complaint
-    </h2>
+    <!-- ====== HEADER ====== -->
+    <div style="background: linear-gradient(135deg, #1a3c6e 0%, #2563ab 100%); border-radius: 16px; padding: 30px 35px; margin-bottom: 25px; box-shadow: 0 4px 20px rgba(26,60,110,0.3);">
+        <h2 style="color: white; font-size: 24px; font-weight: 800; margin-bottom: 5px;">
+            📝 Submit a Complaint
+        </h2>
+        <p style="color: rgba(255,255,255,0.8); font-size: 14px;">
+            Fill in the details below and we will get it resolved as soon as possible.
+        </p>
+    </div>
 
-    <form method="POST" action="/submit-complaint">
+    <!-- ====== FORM CARD ====== -->
+    <div class="card">
 
-        <!-- Complaint Title -->
-        <div style="margin-bottom: 20px;">
-            <label style="display:block; margin-bottom: 6px; font-weight: bold;">
-                📌 Complaint Title
-            </label>
-            <input
-                type="text"
-                name="title"
-                placeholder="Enter a short title for your complaint"
-                required
-                style="width:100%; padding:10px; border:1px solid #ccc; border-radius:5px; font-size:15px;">
+        <form method="POST" action="/submit-complaint">
+
+            <!-- Title -->
+            <div class="form-group">
+                <label>📌 Complaint Title</label>
+                <input
+                    type="text"
+                    name="title"
+                    placeholder="Enter a short and clear title"
+                    required>
+            </div>
+
+            <!-- Category & Priority in same row -->
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+
+                <div class="form-group">
+                    <label>🏷️ Category</label>
+                    <select name="category" required>
+                        <option value="">-- Select Category --</option>
+                        <option value="Road & Infrastructure">🛣️ Road & Infrastructure</option>
+                        <option value="Water Supply">💧 Water Supply</option>
+                        <option value="Electricity">⚡ Electricity</option>
+                        <option value="Sanitation">🗑️ Sanitation</option>
+                        <option value="Public Safety">🚔 Public Safety</option>
+                        <option value="Healthcare">🏥 Healthcare</option>
+                        <option value="Education">🎓 Education</option>
+                        <option value="Other">📋 Other</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label>🚨 Priority Level</label>
+                    <select name="priority" required>
+                        <option value="">-- Select Priority --</option>
+                        <option value="Low">🟢 Low</option>
+                        <option value="Medium">🟡 Medium</option>
+                        <option value="High">🔴 High</option>
+                    </select>
+                </div>
+
+            </div>
+
+            <!-- Description -->
+            <div class="form-group">
+                <label>📄 Description</label>
+                <textarea
+                    name="description"
+                    placeholder="Describe your complaint in detail. Include location, time, and any other relevant information..."
+                    required
+                    rows="6"></textarea>
+            </div>
+
+            <!-- Info Box -->
+            <div style="background: #eff6ff; border-left: 4px solid #2563ab; padding: 14px 18px; border-radius: 8px; margin-bottom: 25px;">
+                <p style="color: #1d4ed8; font-size: 13px; font-weight: 600; margin-bottom: 4px;">
+                    ℹ️ What happens after submission?
+                </p>
+                <p style="color: #3b5998; font-size: 13px; line-height: 1.6;">
+                    Your complaint will be reviewed by our admin team. You can track the status from your dashboard. Average resolution time is 3-5 working days.
+                </p>
+            </div>
+
+            <!-- Buttons -->
+            <div style="display: flex; gap: 15px; flex-wrap: wrap;">
+                <button type="submit" class="btn btn-primary" style="flex: 1; padding: 13px; font-size: 15px;">
+                    📤 Submit Complaint
+                </button>
+                <a href="/dashboard" class="btn" style="flex: 1; padding: 13px; font-size: 15px; text-align: center; background: #f3f4f6; color: #374151; font-weight: 600;">
+                    ← Back to Dashboard
+                </a>
+            </div>
+
+        </form>
+
+    </div>
+
+    <!-- ====== TIPS CARD ====== -->
+    <div class="card" style="background: linear-gradient(135deg, #f0f9ff, #e0f2fe);">
+        <h4 style="color: #1a3c6e; margin-bottom: 15px; font-size: 16px;">
+            💡 Tips for a Good Complaint
+        </h4>
+        <div style="display: flex; flex-direction: column; gap: 10px;">
+            <div style="display: flex; align-items: center; gap: 10px;">
+                <span style="color: #2563ab; font-size: 18px;">✓</span>
+                <span style="color: #555; font-size: 14px;">Be specific about the location and problem</span>
+            </div>
+            <div style="display: flex; align-items: center; gap: 10px;">
+                <span style="color: #2563ab; font-size: 18px;">✓</span>
+                <span style="color: #555; font-size: 14px;">Choose the correct category for faster resolution</span>
+            </div>
+            <div style="display: flex; align-items: center; gap: 10px;">
+                <span style="color: #2563ab; font-size: 18px;">✓</span>
+                <span style="color: #555; font-size: 14px;">Set High priority only for urgent issues</span>
+            </div>
+            <div style="display: flex; align-items: center; gap: 10px;">
+                <span style="color: #2563ab; font-size: 18px;">✓</span>
+                <span style="color: #555; font-size: 14px;">Track your complaint status from dashboard</span>
+            </div>
         </div>
-
-        <!-- Category -->
-        <div style="margin-bottom: 20px;">
-            <label style="display:block; margin-bottom: 6px; font-weight: bold;">
-                🏷️ Category
-            </label>
-            <select
-                name="category"
-                required
-                style="width:100%; padding:10px; border:1px solid #ccc; border-radius:5px; font-size:15px;">
-                <option value="">-- Select Category --</option>
-                <option value="Road & Infrastructure">🛣️ Road & Infrastructure</option>
-                <option value="Water Supply">💧 Water Supply</option>
-                <option value="Electricity">⚡ Electricity</option>
-                <option value="Sanitation">🗑️ Sanitation</option>
-                <option value="Public Safety">🚔 Public Safety</option>
-                <option value="Healthcare">🏥 Healthcare</option>
-                <option value="Education">🎓 Education</option>
-                <option value="Other">📋 Other</option>
-            </select>
-        </div>
-
-        <!-- Priority -->
-<div style="margin-bottom: 20px;">
-    <label style="display:block; margin-bottom: 6px; font-weight: bold;">
-        🚨 Priority Level
-    </label>
-    <select
-        name="priority"
-        required
-        style="width:100%; padding:10px; border:1px solid #ccc; border-radius:5px; font-size:15px;">
-        <option value="">-- Select Priority --</option>
-        <option value="Low">🟢 Low</option>
-        <option value="Medium">🟡 Medium</option>
-        <option value="High">🔴 High</option>
-    </select>
-</div>
-
-        <!-- Description -->
-        <div style="margin-bottom: 25px;">
-            <label style="display:block; margin-bottom: 6px; font-weight: bold;">
-                📄 Description
-            </label>
-            <textarea
-                name="description"
-                placeholder="Describe your complaint in detail..."
-                required
-                rows="5"
-                style="width:100%; padding:10px; border:1px solid #ccc; border-radius:5px; font-size:15px; resize:vertical;"></textarea>
-        </div>
-
-        <!-- Submit Button -->
-        <button type="submit" class="btn btn-primary" style="width:100%; font-size:16px; padding:12px;">
-            📤 Submit Complaint
-        </button>
-
-    </form>
-
-    <p style="text-align:center; margin-top:20px; color:#555;">
-        Want to go back?
-        <a href="/dashboard" style="color:#1a3c6e; font-weight:bold;">Back to Dashboard</a>
-    </p>
+    </div>
 
 </div>
 
