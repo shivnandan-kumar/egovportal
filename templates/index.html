@@ -26,14 +26,31 @@
             Submit complaints, request government services, and track their resolution — all from the comfort of your home.
         </p>
 
+        <!-- ====== HERO BUTTONS (role-aware) ====== -->
         <div style="display: flex; gap: 15px; justify-content: center; flex-wrap: wrap;">
-            <a href="/register" style="background: white; color: #1a3c6e; padding: 14px 32px; border-radius: 8px; text-decoration: none; font-weight: 700; font-size: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.2); transition: all 0.2s;">
-                📝 Register as Citizen
-            </a>
-            <a href="/login" style="background: rgba(255,255,255,0.15); color: white; padding: 14px 32px; border-radius: 8px; text-decoration: none; font-weight: 700; font-size: 15px; border: 2px solid rgba(255,255,255,0.4); transition: all 0.2s;">
-                🔐 Login to Portal
-            </a>
+            {% if session.user_id %}
+                {% if session.role == 'admin' %}
+                    <a href="/admin" style="background: white; color: #1a3c6e; padding: 14px 32px; border-radius: 8px; text-decoration: none; font-weight: 700; font-size: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.2);">
+                        🛡️ Go to Admin Panel
+                    </a>
+                {% else %}
+                    <a href="/dashboard" style="background: white; color: #1a3c6e; padding: 14px 32px; border-radius: 8px; text-decoration: none; font-weight: 700; font-size: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.2);">
+                        📋 Go to My Dashboard
+                    </a>
+                    <a href="/submit-complaint" style="background: rgba(255,255,255,0.15); color: white; padding: 14px 32px; border-radius: 8px; text-decoration: none; font-weight: 700; font-size: 15px; border: 2px solid rgba(255,255,255,0.4);">
+                        📝 Submit Complaint
+                    </a>
+                {% endif %}
+            {% else %}
+                <a href="/register" style="background: white; color: #1a3c6e; padding: 14px 32px; border-radius: 8px; text-decoration: none; font-weight: 700; font-size: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.2);">
+                    📝 Register as Citizen
+                </a>
+                <a href="/login" style="background: rgba(255,255,255,0.15); color: white; padding: 14px 32px; border-radius: 8px; text-decoration: none; font-weight: 700; font-size: 15px; border: 2px solid rgba(255,255,255,0.4);">
+                    🔐 Login to Portal
+                </a>
+            {% endif %}
         </div>
+
     </div>
 </div>
 
@@ -158,9 +175,24 @@
     <p style="color: rgba(255,255,255,0.8); margin-bottom: 25px; font-size: 15px;">
         Join thousands of citizens already using our portal
     </p>
-    <a href="/register" style="background: white; color: #1a3c6e; padding: 14px 36px; border-radius: 8px; text-decoration: none; font-weight: 700; font-size: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.2);">
-        🚀 Get Started Now
-    </a>
+
+    <!-- ====== CTA BUTTON (role-aware) ====== -->
+    {% if session.user_id %}
+        {% if session.role == 'admin' %}
+            <a href="/admin" style="background: white; color: #1a3c6e; padding: 14px 36px; border-radius: 8px; text-decoration: none; font-weight: 700; font-size: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.2);">
+                🛡️ Go to Admin Panel
+            </a>
+        {% else %}
+            <a href="/dashboard" style="background: white; color: #1a3c6e; padding: 14px 36px; border-radius: 8px; text-decoration: none; font-weight: 700; font-size: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.2);">
+                📋 Go to My Dashboard
+            </a>
+        {% endif %}
+    {% else %}
+        <a href="/register" style="background: white; color: #1a3c6e; padding: 14px 36px; border-radius: 8px; text-decoration: none; font-weight: 700; font-size: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.2);">
+            🚀 Get Started Now
+        </a>
+    {% endif %}
+
 </div>
 
 {% endblock %}
