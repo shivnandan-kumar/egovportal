@@ -76,7 +76,6 @@
 
 <!-- Chart.js Scripts -->
 <script>
-    // ====== STATUS PIE CHART ======
     const statusCtx = document.getElementById('statusChart').getContext('2d');
     new Chart(statusCtx, {
         type: 'doughnut',
@@ -84,11 +83,7 @@
             labels: ['Pending', 'In Progress', 'Resolved'],
             datasets: [{
                 data: [{{ pending }}, {{ inprogress }}, {{ resolved }}],
-                backgroundColor: [
-                    '#f59e0b',
-                    '#0891b2',
-                    '#16a34a'
-                ],
+                backgroundColor: ['#f59e0b', '#0891b2', '#16a34a'],
                 borderWidth: 0,
                 hoverOffset: 8
             }]
@@ -99,16 +94,12 @@
             plugins: {
                 legend: {
                     position: 'bottom',
-                    labels: {
-                        padding: 20,
-                        font: { size: 13 }
-                    }
+                    labels: { padding: 20, font: { size: 13 } }
                 }
             }
         }
     });
 
-    // ====== CATEGORY BAR CHART ======
     const categoryCtx = document.getElementById('categoryChart').getContext('2d');
     new Chart(categoryCtx, {
         type: 'bar',
@@ -126,24 +117,14 @@
         options: {
             responsive: true,
             maintainAspectRatio: false,
-            plugins: {
-                legend: { display: false }
-            },
+            plugins: { legend: { display: false } },
             scales: {
-                y: {
-                    beginAtZero: true,
-                    ticks: { stepSize: 1 },
-                    grid: { color: '#f0f4f8' }
-                },
-                x: {
-                    grid: { display: false },
-                    ticks: { font: { size: 11 } }
-                }
+                y: { beginAtZero: true, ticks: { stepSize: 1 }, grid: { color: '#f0f4f8' } },
+                x: { grid: { display: false }, ticks: { font: { size: 11 } } }
             }
         }
     });
 
-    // ====== PRIORITY BAR CHART ======
     const priorityCtx = document.getElementById('priorityChart').getContext('2d');
     new Chart(priorityCtx, {
         type: 'bar',
@@ -157,11 +138,7 @@
                     'rgba(245, 158, 11, 0.8)',
                     'rgba(220, 38, 38, 0.8)'
                 ],
-                borderColor: [
-                    '#16a34a',
-                    '#f59e0b',
-                    '#dc2626'
-                ],
+                borderColor: ['#16a34a', '#f59e0b', '#dc2626'],
                 borderWidth: 1,
                 borderRadius: 6
             }]
@@ -170,18 +147,10 @@
             responsive: true,
             maintainAspectRatio: false,
             indexAxis: 'y',
-            plugins: {
-                legend: { display: false }
-            },
+            plugins: { legend: { display: false } },
             scales: {
-                x: {
-                    beginAtZero: true,
-                    ticks: { stepSize: 1 },
-                    grid: { color: '#f0f4f8' }
-                },
-                y: {
-                    grid: { display: false }
-                }
+                x: { beginAtZero: true, ticks: { stepSize: 1 }, grid: { color: '#f0f4f8' } },
+                y: { grid: { display: false } }
             }
         }
     });
@@ -189,6 +158,8 @@
 
 <!-- ====== COMPLAINTS TABLE ====== -->
 <div class="card">
+
+    <!-- Header -->
     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; flex-wrap: wrap; gap: 10px;">
         <h3 style="color: #1a3c6e; font-size: 18px; font-weight: 700;">
             📋 All Citizen Complaints
@@ -198,6 +169,53 @@
         </div>
     </div>
 
+    <!-- ====== SEARCH & FILTER BAR ====== -->
+    <form method="GET" action="/admin" style="margin-bottom: 20px;">
+        <div style="display: grid; grid-template-columns: 2fr 1fr 1fr auto; gap: 10px;">
+
+            <!-- Search -->
+            <input
+                type="text"
+                name="search"
+                placeholder="🔍 Search by title, category or citizen..."
+                value="{{ search }}"
+                style="padding: 10px 15px; border: 2px solid #e5e7eb; border-radius: 8px; font-size: 14px; font-family: inherit;">
+
+            <!-- Status Filter -->
+            <select name="status" style="padding: 10px 15px; border: 2px solid #e5e7eb; border-radius: 8px; font-size: 14px; font-family: inherit;">
+                <option value="">All Status</option>
+                <option value="Pending"     {% if status == 'Pending' %}selected{% endif %}>⏳ Pending</option>
+                <option value="In Progress" {% if status == 'In Progress' %}selected{% endif %}>🔄 In Progress</option>
+                <option value="Resolved"    {% if status == 'Resolved' %}selected{% endif %}>✅ Resolved</option>
+            </select>
+
+            <!-- Priority Filter -->
+            <select name="priority" style="padding: 10px 15px; border: 2px solid #e5e7eb; border-radius: 8px; font-size: 14px; font-family: inherit;">
+                <option value="">All Priority</option>
+                <option value="High"   {% if priority == 'High' %}selected{% endif %}>🔴 High</option>
+                <option value="Medium" {% if priority == 'Medium' %}selected{% endif %}>🟡 Medium</option>
+                <option value="Low"    {% if priority == 'Low' %}selected{% endif %}>🟢 Low</option>
+            </select>
+
+            <!-- Search Button -->
+            <button type="submit" class="btn btn-primary" style="padding: 10px 20px; font-size: 14px;">
+                Search
+            </button>
+
+        </div>
+
+        <!-- Clear Filters -->
+        {% if search or status or priority %}
+        <div style="margin-top: 10px;">
+            <a href="/admin" style="color: #dc3545; font-size: 13px; font-weight: 600; text-decoration: none;">
+                ✕ Clear Filters
+            </a>
+        </div>
+        {% endif %}
+
+    </form>
+
+    <!-- ====== TABLE ====== -->
     {% if complaints %}
     <div class="table-wrapper">
         <table>
@@ -287,11 +305,51 @@
     {% else %}
     <div style="text-align: center; padding: 60px 20px;">
         <div style="font-size: 70px; margin-bottom: 15px;">📭</div>
-        <h3 style="color: #1a3c6e; margin-bottom: 10px;">No Complaints Yet</h3>
+        <h3 style="color: #1a3c6e; margin-bottom: 10px;">No Complaints Found</h3>
         <p style="color: #888; font-size: 14px;">
-            No complaints have been submitted by citizens yet.
+            {% if search or status or priority %}
+                No complaints match your search.
+                <a href="/admin" style="color: #2563ab; font-weight: 600;">Clear filters</a>
+            {% else %}
+                No complaints submitted yet.
+            {% endif %}
         </p>
     </div>
+    {% endif %}
+
+    <!-- ====== PAGINATION ====== -->
+    {% if total_pages > 1 %}
+    <div style="display: flex; justify-content: center; align-items: center; gap: 8px; margin-top: 25px; flex-wrap: wrap;">
+
+        <!-- Previous -->
+        {% if page > 1 %}
+        <a href="/admin?page={{ page - 1 }}&search={{ search }}&status={{ status }}&priority={{ priority }}"
+           style="padding: 8px 16px; border-radius: 8px; background: #1a3c6e; color: white; text-decoration: none; font-size: 14px; font-weight: 600;">
+            ← Prev
+        </a>
+        {% endif %}
+
+        <!-- Page Numbers -->
+        {% for p in range(1, total_pages + 1) %}
+        <a href="/admin?page={{ p }}&search={{ search }}&status={{ status }}&priority={{ priority }}"
+           style="padding: 8px 14px; border-radius: 8px; text-decoration: none; font-size: 14px; font-weight: 600;
+                  {% if p == page %}background: #2563ab; color: white;{% else %}background: #f0f4f8; color: #1a3c6e;{% endif %}">
+            {{ p }}
+        </a>
+        {% endfor %}
+
+        <!-- Next -->
+        {% if page < total_pages %}
+        <a href="/admin?page={{ page + 1 }}&search={{ search }}&status={{ status }}&priority={{ priority }}"
+           style="padding: 8px 16px; border-radius: 8px; background: #1a3c6e; color: white; text-decoration: none; font-size: 14px; font-weight: 600;">
+            Next →
+        </a>
+        {% endif %}
+
+    </div>
+    <p style="text-align: center; color: #888; font-size: 13px; margin-top: 10px;">
+        Page {{ page }} of {{ total_pages }}
+    </p>
     {% endif %}
 
 </div>
