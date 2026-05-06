@@ -159,13 +159,18 @@
 <!-- ====== COMPLAINTS TABLE ====== -->
 <div class="card">
 
-    <!-- Header -->
+    <!-- ✅ UPDATED HEADER WITH EXPORT BUTTON -->
     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; flex-wrap: wrap; gap: 10px;">
         <h3 style="color: #1a3c6e; font-size: 18px; font-weight: 700;">
             📋 All Citizen Complaints
         </h3>
-        <div style="background: #eff6ff; color: #1d4ed8; padding: 6px 16px; border-radius: 20px; font-size: 13px; font-weight: 600;">
-            Total: {{ total }} complaints
+        <div style="display: flex; align-items: center; gap: 10px;">
+            <div style="background: #eff6ff; color: #1d4ed8; padding: 6px 16px; border-radius: 20px; font-size: 13px; font-weight: 600;">
+                Total: {{ total }} complaints
+            </div>
+            <a href="/export-csv" class="btn btn-success" style="font-size: 13px; padding: 8px 16px;">
+                📥 Export CSV
+            </a>
         </div>
     </div>
 
@@ -321,7 +326,6 @@
     {% if total_pages > 1 %}
     <div style="display: flex; justify-content: center; align-items: center; gap: 8px; margin-top: 25px; flex-wrap: wrap;">
 
-        <!-- Previous -->
         {% if page > 1 %}
         <a href="/admin?page={{ page - 1 }}&search={{ search }}&status={{ status }}&priority={{ priority }}"
            style="padding: 8px 16px; border-radius: 8px; background: #1a3c6e; color: white; text-decoration: none; font-size: 14px; font-weight: 600;">
@@ -329,7 +333,6 @@
         </a>
         {% endif %}
 
-        <!-- Page Numbers -->
         {% for p in range(1, total_pages + 1) %}
         <a href="/admin?page={{ p }}&search={{ search }}&status={{ status }}&priority={{ priority }}"
            style="padding: 8px 14px; border-radius: 8px; text-decoration: none; font-size: 14px; font-weight: 600;
@@ -338,7 +341,6 @@
         </a>
         {% endfor %}
 
-        <!-- Next -->
         {% if page < total_pages %}
         <a href="/admin?page={{ page + 1 }}&search={{ search }}&status={{ status }}&priority={{ priority }}"
            style="padding: 8px 16px; border-radius: 8px; background: #1a3c6e; color: white; text-decoration: none; font-size: 14px; font-weight: 600;">

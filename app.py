@@ -395,6 +395,57 @@ def admin_dashboard():
                            page            = page,
                            total_pages     = total_pages)
 
+# ----------------------------------------
+# EXPORT COMPLAINTS TO CSV
+# ----------------------------------------
+@app.route('/export-csv')
+def export_csv():
+    if 'user_id' not in session or session['role'] != 'admin':
+        flash('❌ Access denied!', 'danger')
+        return redirect(url_for('login'))
+
+    import csv
+    import io
+    from flask import Response
+
+    conn   = sqlite3.connect('database.db')
+    cursor = conn.cursor()
+
+    cursor.execute('''
+        SELECT complaints.id, users.username, complaints.title,
+               complaints.category, complaints.priority,
+               complaints.status, complaints.date_submitted
+        FROM complaints
+        JOIN users ON complaints.user_id = users.id
+        ORDER BY complaints.id DESC
+    ''')
+    complaints = cursor.fetchall()
+    conn.close()
+
+    # Create CSV in memory
+    output = io.StringIO()
+    writer = csv.writer(output)
+
+    # Write header row
+    writer.writerow([
+        'ID', 'Citizen Name', 'Title',
+        'Category', 'Priority', 'Status', 'Date Submitted'
+    ])
+
+    # Write data rows
+    for complaint in complaints:
+        writer.writerow(complaint)
+
+    output.seek(0)
+
+    return Response(
+        output,
+        mimetype='text/csv',
+        headers={
+            'Content-Disposition': 'attachment; filename=complaints_report.csv'
+        }
+    )
+
 
 # ----------------------------------------
 # UPDATE COMPLAINT STATUS ROUTE
