@@ -187,37 +187,74 @@ def logout():
 # ----------------------------------------
 @app.route('/dashboard')
 def user_dashboard():
-    # Not logged in
     if 'user_id' not in session:
         flash('❌ Please login first!', 'danger')
         return redirect(url_for('login'))
 
-    # Logged in but is an admin - redirect to admin panel
     if session['role'] == 'admin':
         flash('⚠️ Admins cannot access the user dashboard!', 'danger')
         return redirect(url_for('admin_dashboard'))
 
-    # Get all complaints for this user
+    # Get search and filter values from URL
+    search   = request.args.get('search', '')
+    status   = request.args.get('status', '')
+    priority = request.args.get('priority', '')
+    page     = int(request.args.get('page', 1))
+    per_page = 5
+
+    # Build query based on filters
+    query  = 'SELECT * FROM complaints WHERE user_id = ?'
+    params = [session['user_id']]
+
+    if search:
+        query += ' AND (title LIKE ? OR category LIKE ?)'
+        params.extend([f'%{search}%', f'%{search}%'])
+
+    if status:
+        query += ' AND status = ?'
+        params.append(status)
+
+    if priority:
+        query += ' AND priority = ?'
+        params.append(priority)
+
+    query += ' ORDER BY id DESC'
+
     conn   = sqlite3.connect('database.db')
     cursor = conn.cursor()
 
-    cursor.execute('SELECT * FROM complaints WHERE user_id = ? ORDER BY id DESC',
-                   (session['user_id'],))
+    # Get total count for pagination
+    cursor.execute(query, params)
+    all_complaints = cursor.fetchall()
+    total_count    = len(all_complaints)
+
+    # Apply pagination
+    offset     = (page - 1) * per_page
+    query     += f' LIMIT {per_page} OFFSET {offset}'
+    cursor.execute(query, params)
     complaints = cursor.fetchall()
     conn.close()
 
-    # Count complaints by status
-    total      = len(complaints)
-    pending    = sum(1 for c in complaints if c[5] == 'Pending')
-    inprogress = sum(1 for c in complaints if c[5] == 'In Progress')
-    resolved   = sum(1 for c in complaints if c[5] == 'Resolved')
+    # Count all complaints for stats
+    total      = len(all_complaints)
+    pending    = sum(1 for c in all_complaints if c[5] == 'Pending')
+    inprogress = sum(1 for c in all_complaints if c[5] == 'In Progress')
+    resolved   = sum(1 for c in all_complaints if c[5] == 'Resolved')
+
+    # Pagination info
+    total_pages = (total_count + per_page - 1) // per_page
 
     return render_template('dashboard.html',
-                           complaints = complaints,
-                           total      = total,
-                           pending    = pending,
-                           inprogress = inprogress,
-                           resolved   = resolved)
+                           complaints  = complaints,
+                           total       = total,
+                           pending     = pending,
+                           inprogress  = inprogress,
+                           resolved    = resolved,
+                           search      = search,
+                           status      = status,
+                           priority    = priority,
+                           page        = page,
+                           total_pages = total_pages)
 
 # ----------------------------------------
 # SUBMIT COMPLAINT ROUTE
@@ -267,25 +304,55 @@ def admin_dashboard():
         flash('❌ Access denied!', 'danger')
         return redirect(url_for('login'))
 
+    # Get search and filter values from URL
+    search   = request.args.get('search', '')
+    status   = request.args.get('status', '')
+    priority = request.args.get('priority', '')
+    page     = int(request.args.get('page', 1))
+    per_page = 5
+
+    # Build query
+    query  = '''SELECT complaints.*, users.username
+                FROM complaints
+                JOIN users ON complaints.user_id = users.id
+                WHERE 1=1'''
+    params = []
+
+    if search:
+        query += ' AND (complaints.title LIKE ? OR complaints.category LIKE ? OR users.username LIKE ?)'
+        params.extend([f'%{search}%', f'%{search}%', f'%{search}%'])
+
+    if status:
+        query += ' AND complaints.status = ?'
+        params.append(status)
+
+    if priority:
+        query += ' AND complaints.priority = ?'
+        params.append(priority)
+
+    query += ' ORDER BY complaints.id DESC'
+
     conn   = sqlite3.connect('database.db')
     cursor = conn.cursor()
 
-    # Get ALL complaints with username
-    cursor.execute('''
-        SELECT complaints.*, users.username
-        FROM complaints
-        JOIN users ON complaints.user_id = users.id
-        ORDER BY complaints.id DESC
-    ''')
+    # Get all for stats and charts
+    cursor.execute(query, params)
+    all_complaints = cursor.fetchall()
+    total_count    = len(all_complaints)
+
+    # Apply pagination
+    offset     = (page - 1) * per_page
+    paginated  = query + f' LIMIT {per_page} OFFSET {offset}'
+    cursor.execute(paginated, params)
     complaints = cursor.fetchall()
 
-    # Count by status
-    total      = len(complaints)
-    pending    = sum(1 for c in complaints if c[5] == 'Pending')
-    inprogress = sum(1 for c in complaints if c[5] == 'In Progress')
-    resolved   = sum(1 for c in complaints if c[5] == 'Resolved')
+    # Count by status for stats
+    total      = total_count
+    pending    = sum(1 for c in all_complaints if c[5] == 'Pending')
+    inprogress = sum(1 for c in all_complaints if c[5] == 'In Progress')
+    resolved   = sum(1 for c in all_complaints if c[5] == 'Resolved')
 
-    # Count by category for bar chart
+    # Chart data
     cursor.execute('''
         SELECT category, COUNT(*) as count
         FROM complaints
@@ -294,7 +361,6 @@ def admin_dashboard():
     ''')
     category_data = cursor.fetchall()
 
-    # Count by priority for pie chart
     cursor.execute('''
         SELECT priority, COUNT(*) as count
         FROM complaints
@@ -307,9 +373,11 @@ def admin_dashboard():
     # Prepare chart data
     category_labels = [row[0] for row in category_data]
     category_counts = [row[1] for row in category_data]
-
     priority_labels = [row[0] for row in priority_data]
     priority_counts = [row[1] for row in priority_data]
+
+    # Pagination info
+    total_pages = (total_count + per_page - 1) // per_page
 
     return render_template('admin_dashboard.html',
                            complaints      = complaints,
@@ -320,7 +388,12 @@ def admin_dashboard():
                            category_labels = category_labels,
                            category_counts = category_counts,
                            priority_labels = priority_labels,
-                           priority_counts = priority_counts)
+                           priority_counts = priority_counts,
+                           search          = search,
+                           status          = status,
+                           priority        = priority,
+                           page            = page,
+                           total_pages     = total_pages)
 
 
 # ----------------------------------------
