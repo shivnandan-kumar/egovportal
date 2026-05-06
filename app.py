@@ -267,10 +267,10 @@ def admin_dashboard():
         flash('❌ Access denied!', 'danger')
         return redirect(url_for('login'))
 
-    # Get ALL complaints with username of citizen
     conn   = sqlite3.connect('database.db')
     cursor = conn.cursor()
 
+    # Get ALL complaints with username
     cursor.execute('''
         SELECT complaints.*, users.username
         FROM complaints
@@ -278,20 +278,49 @@ def admin_dashboard():
         ORDER BY complaints.id DESC
     ''')
     complaints = cursor.fetchall()
-    conn.close()
 
-    # Count complaints by status
+    # Count by status
     total      = len(complaints)
     pending    = sum(1 for c in complaints if c[5] == 'Pending')
     inprogress = sum(1 for c in complaints if c[5] == 'In Progress')
     resolved   = sum(1 for c in complaints if c[5] == 'Resolved')
 
+    # Count by category for bar chart
+    cursor.execute('''
+        SELECT category, COUNT(*) as count
+        FROM complaints
+        GROUP BY category
+        ORDER BY count DESC
+    ''')
+    category_data = cursor.fetchall()
+
+    # Count by priority for pie chart
+    cursor.execute('''
+        SELECT priority, COUNT(*) as count
+        FROM complaints
+        GROUP BY priority
+    ''')
+    priority_data = cursor.fetchall()
+
+    conn.close()
+
+    # Prepare chart data
+    category_labels = [row[0] for row in category_data]
+    category_counts = [row[1] for row in category_data]
+
+    priority_labels = [row[0] for row in priority_data]
+    priority_counts = [row[1] for row in priority_data]
+
     return render_template('admin_dashboard.html',
-                           complaints = complaints,
-                           total      = total,
-                           pending    = pending,
-                           inprogress = inprogress,
-                           resolved   = resolved)
+                           complaints      = complaints,
+                           total           = total,
+                           pending         = pending,
+                           inprogress      = inprogress,
+                           resolved        = resolved,
+                           category_labels = category_labels,
+                           category_counts = category_counts,
+                           priority_labels = priority_labels,
+                           priority_counts = priority_counts)
 
 
 # ----------------------------------------

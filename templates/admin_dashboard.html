@@ -39,6 +39,154 @@
     </div>
 </div>
 
+<!-- ====== CHARTS SECTION ====== -->
+<div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 25px;">
+
+    <!-- Status Pie Chart -->
+    <div class="card">
+        <h3 style="color: #1a3c6e; font-size: 16px; font-weight: 700; margin-bottom: 20px;">
+            📊 Complaints by Status
+        </h3>
+        <div style="position: relative; height: 250px; display: flex; justify-content: center;">
+            <canvas id="statusChart"></canvas>
+        </div>
+    </div>
+
+    <!-- Category Bar Chart -->
+    <div class="card">
+        <h3 style="color: #1a3c6e; font-size: 16px; font-weight: 700; margin-bottom: 20px;">
+            📈 Complaints by Category
+        </h3>
+        <div style="position: relative; height: 250px;">
+            <canvas id="categoryChart"></canvas>
+        </div>
+    </div>
+
+</div>
+
+<!-- Priority Chart -->
+<div class="card" style="margin-bottom: 25px;">
+    <h3 style="color: #1a3c6e; font-size: 16px; font-weight: 700; margin-bottom: 20px;">
+        🚨 Complaints by Priority
+    </h3>
+    <div style="position: relative; height: 200px;">
+        <canvas id="priorityChart"></canvas>
+    </div>
+</div>
+
+<!-- Chart.js Scripts -->
+<script>
+    // ====== STATUS PIE CHART ======
+    const statusCtx = document.getElementById('statusChart').getContext('2d');
+    new Chart(statusCtx, {
+        type: 'doughnut',
+        data: {
+            labels: ['Pending', 'In Progress', 'Resolved'],
+            datasets: [{
+                data: [{{ pending }}, {{ inprogress }}, {{ resolved }}],
+                backgroundColor: [
+                    '#f59e0b',
+                    '#0891b2',
+                    '#16a34a'
+                ],
+                borderWidth: 0,
+                hoverOffset: 8
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    position: 'bottom',
+                    labels: {
+                        padding: 20,
+                        font: { size: 13 }
+                    }
+                }
+            }
+        }
+    });
+
+    // ====== CATEGORY BAR CHART ======
+    const categoryCtx = document.getElementById('categoryChart').getContext('2d');
+    new Chart(categoryCtx, {
+        type: 'bar',
+        data: {
+            labels: {{ category_labels | tojson }},
+            datasets: [{
+                label: 'Complaints',
+                data: {{ category_counts | tojson }},
+                backgroundColor: 'rgba(37, 99, 171, 0.8)',
+                borderColor: '#1a3c6e',
+                borderWidth: 1,
+                borderRadius: 6
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: { display: false }
+            },
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    ticks: { stepSize: 1 },
+                    grid: { color: '#f0f4f8' }
+                },
+                x: {
+                    grid: { display: false },
+                    ticks: { font: { size: 11 } }
+                }
+            }
+        }
+    });
+
+    // ====== PRIORITY BAR CHART ======
+    const priorityCtx = document.getElementById('priorityChart').getContext('2d');
+    new Chart(priorityCtx, {
+        type: 'bar',
+        data: {
+            labels: {{ priority_labels | tojson }},
+            datasets: [{
+                label: 'Complaints',
+                data: {{ priority_counts | tojson }},
+                backgroundColor: [
+                    'rgba(22, 163, 74, 0.8)',
+                    'rgba(245, 158, 11, 0.8)',
+                    'rgba(220, 38, 38, 0.8)'
+                ],
+                borderColor: [
+                    '#16a34a',
+                    '#f59e0b',
+                    '#dc2626'
+                ],
+                borderWidth: 1,
+                borderRadius: 6
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            indexAxis: 'y',
+            plugins: {
+                legend: { display: false }
+            },
+            scales: {
+                x: {
+                    beginAtZero: true,
+                    ticks: { stepSize: 1 },
+                    grid: { color: '#f0f4f8' }
+                },
+                y: {
+                    grid: { display: false }
+                }
+            }
+        }
+    });
+</script>
+
 <!-- ====== COMPLAINTS TABLE ====== -->
 <div class="card">
     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; flex-wrap: wrap; gap: 10px;">
