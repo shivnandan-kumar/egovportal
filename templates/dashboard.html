@@ -56,7 +56,6 @@
     <form method="GET" action="/dashboard" style="margin-bottom: 20px;">
         <div style="display: grid; grid-template-columns: 2fr 1fr 1fr auto; gap: 10px;">
 
-            <!-- Search -->
             <input
                 type="text"
                 name="search"
@@ -64,7 +63,6 @@
                 value="{{ search }}"
                 style="padding: 10px 15px; border: 2px solid #e5e7eb; border-radius: 8px; font-size: 14px; font-family: inherit;">
 
-            <!-- Status Filter -->
             <select name="status" style="padding: 10px 15px; border: 2px solid #e5e7eb; border-radius: 8px; font-size: 14px; font-family: inherit;">
                 <option value="">All Status</option>
                 <option value="Pending"     {% if status == 'Pending' %}selected{% endif %}>⏳ Pending</option>
@@ -72,7 +70,6 @@
                 <option value="Resolved"    {% if status == 'Resolved' %}selected{% endif %}>✅ Resolved</option>
             </select>
 
-            <!-- Priority Filter -->
             <select name="priority" style="padding: 10px 15px; border: 2px solid #e5e7eb; border-radius: 8px; font-size: 14px; font-family: inherit;">
                 <option value="">All Priority</option>
                 <option value="High"   {% if priority == 'High' %}selected{% endif %}>🔴 High</option>
@@ -80,14 +77,12 @@
                 <option value="Low"    {% if priority == 'Low' %}selected{% endif %}>🟢 Low</option>
             </select>
 
-            <!-- Search Button -->
             <button type="submit" class="btn btn-primary" style="padding: 10px 20px; font-size: 14px;">
                 Search
             </button>
 
         </div>
 
-        <!-- Clear Filters -->
         {% if search or status or priority %}
         <div style="margin-top: 10px;">
             <a href="/dashboard" style="color: #dc3545; font-size: 13px; font-weight: 600; text-decoration: none;">
@@ -110,6 +105,7 @@
                     <th>Priority</th>
                     <th>Date</th>
                     <th>Status</th>
+                    <th>History</th>
                 </tr>
             </thead>
             <tbody>
@@ -141,6 +137,13 @@
                             <span class="badge badge-resolved">✅ Resolved</span>
                         {% endif %}
                     </td>
+                    <!-- ✅ NEW HISTORY BUTTON COLUMN -->
+                    <td>
+                        <a href="/timeline/{{ complaint[0] }}"
+                           style="background: #eff6ff; color: #1d4ed8; padding: 5px 12px; border-radius: 6px; font-size: 12px; font-weight: 600; text-decoration: none;">
+                            📅 History
+                        </a>
+                    </td>
                 </tr>
                 {% endfor %}
             </tbody>
@@ -169,7 +172,6 @@
     {% if total_pages > 1 %}
     <div style="display: flex; justify-content: center; align-items: center; gap: 8px; margin-top: 25px; flex-wrap: wrap;">
 
-        <!-- Previous Button -->
         {% if page > 1 %}
         <a href="/dashboard?page={{ page - 1 }}&search={{ search }}&status={{ status }}&priority={{ priority }}"
            style="padding: 8px 16px; border-radius: 8px; background: #1a3c6e; color: white; text-decoration: none; font-size: 14px; font-weight: 600;">
@@ -177,7 +179,6 @@
         </a>
         {% endif %}
 
-        <!-- Page Numbers -->
         {% for p in range(1, total_pages + 1) %}
         <a href="/dashboard?page={{ p }}&search={{ search }}&status={{ status }}&priority={{ priority }}"
            style="padding: 8px 14px; border-radius: 8px; text-decoration: none; font-size: 14px; font-weight: 600;
@@ -186,7 +187,6 @@
         </a>
         {% endfor %}
 
-        <!-- Next Button -->
         {% if page < total_pages %}
         <a href="/dashboard?page={{ page + 1 }}&search={{ search }}&status={{ status }}&priority={{ priority }}"
            style="padding: 8px 16px; border-radius: 8px; background: #1a3c6e; color: white; text-decoration: none; font-size: 14px; font-weight: 600;">

@@ -236,6 +236,7 @@ window.onload = function() {
                     <th>Priority</th>
                     <th>Date</th>
                     <th>Status</th>
+                    <th>History</th>
                     <th>Action</th>
                 </tr>
             </thead>
@@ -244,6 +245,7 @@ window.onload = function() {
                 <tr>
                     <td style="font-weight: 600; color: #1a3c6e;">{{ complaint[0] }}</td>
 
+                    <!-- Citizen -->
                     <td>
                         <div style="display: flex; align-items: center; gap: 8px;">
                             <div style="width: 32px; height: 32px; background: linear-gradient(135deg, #1a3c6e, #2563ab); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-size: 13px; font-weight: 700;">
@@ -253,14 +255,17 @@ window.onload = function() {
                         </div>
                     </td>
 
+                    <!-- Title -->
                     <td style="font-weight: 500; max-width: 180px;">{{ complaint[2] }}</td>
 
+                    <!-- Category -->
                     <td>
                         <span style="background: #eff6ff; color: #1d4ed8; padding: 4px 10px; border-radius: 6px; font-size: 12px; font-weight: 600;">
                             {{ complaint[4] }}
                         </span>
                     </td>
 
+                    <!-- Priority -->
                     <td>
                         {% if complaint[6] == 'High' %}
                             <span class="badge badge-high">🔴 High</span>
@@ -271,8 +276,10 @@ window.onload = function() {
                         {% endif %}
                     </td>
 
+                    <!-- Date -->
                     <td style="color: #888; font-size: 13px;">{{ complaint[7] }}</td>
 
+                    <!-- Status -->
                     <td>
                         {% if complaint[5] == 'Pending' %}
                             <span class="badge badge-pending">⏳ Pending</span>
@@ -283,6 +290,15 @@ window.onload = function() {
                         {% endif %}
                     </td>
 
+                    <!-- ✅ NEW HISTORY BUTTON COLUMN -->
+                    <td>
+                        <a href="/timeline/{{ complaint[0] }}"
+                           style="background: #eff6ff; color: #1d4ed8; padding: 5px 12px; border-radius: 6px; font-size: 12px; font-weight: 600; text-decoration: none;">
+                            📅 History
+                        </a>
+                    </td>
+
+                    <!-- Action Dropdown -->
                     <td>
                         <form method="POST" action="/update-status">
                             <input type="hidden" name="complaint_id" value="{{ complaint[0] }}">

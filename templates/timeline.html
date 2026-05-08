@@ -1,0 +1,159 @@
+{% extends 'base.html' %}
+
+{% block title %}Complaint Timeline - E-Governance Portal{% endblock %}
+
+{% block content %}
+
+<div style="max-width: 750px; margin: 0 auto;">
+
+    <!-- ====== HEADER ====== -->
+    <div style="background: linear-gradient(135deg, #1a3c6e 0%, #2563ab 100%); border-radius: 16px; padding: 30px 35px; margin-bottom: 25px; box-shadow: 0 4px 20px rgba(26,60,110,0.3);">
+        <h2 style="color: white; font-size: 24px; font-weight: 800; margin-bottom: 5px;">
+            📅 Complaint Timeline
+        </h2>
+        <p style="color: rgba(255,255,255,0.8); font-size: 14px;">
+            Full history of status changes for this complaint
+        </p>
+    </div>
+
+    <!-- ====== COMPLAINT DETAILS ====== -->
+    <div class="card" style="margin-bottom: 25px;">
+        <h3 style="color: #1a3c6e; font-size: 16px; font-weight: 700; margin-bottom: 20px;">
+            📋 Complaint Details
+        </h3>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+
+            <div>
+                <p style="color: #888; font-size: 12px; font-weight: 600; margin-bottom: 4px;">TITLE</p>
+                <p style="color: #333; font-size: 15px; font-weight: 600;">{{ complaint[2] }}</p>
+            </div>
+
+            <div>
+                <p style="color: #888; font-size: 12px; font-weight: 600; margin-bottom: 4px;">CATEGORY</p>
+                <span style="background: #eff6ff; color: #1d4ed8; padding: 4px 10px; border-radius: 6px; font-size: 13px; font-weight: 600;">
+                    {{ complaint[4] }}
+                </span>
+            </div>
+
+            <div>
+                <p style="color: #888; font-size: 12px; font-weight: 600; margin-bottom: 4px;">PRIORITY</p>
+                {% if complaint[6] == 'High' %}
+                    <span class="badge badge-high">🔴 High</span>
+                {% elif complaint[6] == 'Medium' %}
+                    <span class="badge badge-medium">🟡 Medium</span>
+                {% elif complaint[6] == 'Low' %}
+                    <span class="badge badge-low">🟢 Low</span>
+                {% endif %}
+            </div>
+
+            <div>
+                <p style="color: #888; font-size: 12px; font-weight: 600; margin-bottom: 4px;">CURRENT STATUS</p>
+                {% if complaint[5] == 'Pending' %}
+                    <span class="badge badge-pending">⏳ Pending</span>
+                {% elif complaint[5] == 'In Progress' %}
+                    <span class="badge badge-progress">🔄 In Progress</span>
+                {% elif complaint[5] == 'Resolved' %}
+                    <span class="badge badge-resolved">✅ Resolved</span>
+                {% endif %}
+            </div>
+
+            <div style="grid-column: span 2;">
+                <p style="color: #888; font-size: 12px; font-weight: 600; margin-bottom: 4px;">DESCRIPTION</p>
+                <p style="color: #555; font-size: 14px; line-height: 1.6;">{{ complaint[3] }}</p>
+            </div>
+
+            <div>
+                <p style="color: #888; font-size: 12px; font-weight: 600; margin-bottom: 4px;">SUBMITTED BY</p>
+                <p style="color: #333; font-size: 14px; font-weight: 500;">{{ complaint[8] }}</p>
+            </div>
+
+            <div>
+                <p style="color: #888; font-size: 12px; font-weight: 600; margin-bottom: 4px;">DATE SUBMITTED</p>
+                <p style="color: #333; font-size: 14px;">{{ complaint[7] }}</p>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- ====== TIMELINE ====== -->
+    <div class="card">
+        <h3 style="color: #1a3c6e; font-size: 16px; font-weight: 700; margin-bottom: 25px;">
+            🕐 Status History
+        </h3>
+
+        <!-- First Entry - Complaint Submitted -->
+        <div style="display: flex; gap: 15px; margin-bottom: 25px;">
+            <div style="display: flex; flex-direction: column; align-items: center;">
+                <div style="width: 40px; height: 40px; background: linear-gradient(135deg, #1a3c6e, #2563ab); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-size: 16px; flex-shrink: 0;">
+                    📝
+                </div>
+                {% if timeline %}
+                <div style="width: 2px; background: #e5e7eb; flex: 1; margin-top: 8px; min-height: 20px;"></div>
+                {% endif %}
+            </div>
+            <div style="padding-top: 8px;">
+                <p style="font-weight: 700; color: #1a3c6e; margin-bottom: 4px;">
+                    Complaint Submitted
+                </p>
+                <p style="color: #888; font-size: 13px; margin-bottom: 4px;">
+                    {{ complaint[7] }}
+                </p>
+                <span class="badge badge-pending">⏳ Pending</span>
+            </div>
+        </div>
+
+        <!-- Timeline Entries -->
+        {% for entry in timeline %}
+        <div style="display: flex; gap: 15px; margin-bottom: 25px;">
+            <div style="display: flex; flex-direction: column; align-items: center;">
+                <div style="width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-size: 16px; flex-shrink: 0;
+                    {% if entry[2] == 'Resolved' %}background: linear-gradient(135deg, #16a34a, #22c55e);
+                    {% elif entry[2] == 'In Progress' %}background: linear-gradient(135deg, #0891b2, #06b6d4);
+                    {% else %}background: linear-gradient(135deg, #f59e0b, #fbbf24);{% endif %}">
+                    {% if entry[2] == 'Resolved' %}✅
+                    {% elif entry[2] == 'In Progress' %}🔄
+                    {% else %}⏳{% endif %}
+                </div>
+                {% if not loop.last %}
+                <div style="width: 2px; background: #e5e7eb; flex: 1; margin-top: 8px; min-height: 20px;"></div>
+                {% endif %}
+            </div>
+            <div style="padding-top: 8px;">
+                <p style="font-weight: 700; color: #1a3c6e; margin-bottom: 4px;">
+                    Status Updated
+                </p>
+                <p style="color: #888; font-size: 13px; margin-bottom: 4px;">
+                    {{ entry[5] }} · Updated by <strong>{{ entry[4] }}</strong>
+                </p>
+                {% if entry[2] == 'Pending' %}
+                    <span class="badge badge-pending">⏳ Pending</span>
+                {% elif entry[2] == 'In Progress' %}
+                    <span class="badge badge-progress">🔄 In Progress</span>
+                {% elif entry[2] == 'Resolved' %}
+                    <span class="badge badge-resolved">✅ Resolved</span>
+                {% endif %}
+            </div>
+        </div>
+        {% endfor %}
+
+        {% if not timeline %}
+        <div style="text-align: center; padding: 30px; color: #888;">
+            <p style="font-size: 14px;">No status updates yet. Complaint is still pending review.</p>
+        </div>
+        {% endif %}
+
+    </div>
+
+    <!-- ====== BACK BUTTON ====== -->
+    <div style="text-align: center; margin-top: 10px; margin-bottom: 20px;">
+        {% if session.role == 'admin' %}
+            <a href="/admin" class="btn btn-primary">← Back to Admin Dashboard</a>
+        {% else %}
+            <a href="/dashboard" class="btn btn-primary">← Back to My Dashboard</a>
+        {% endif %}
+    </div>
+
+</div>
+
+{% endblock %}

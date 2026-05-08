@@ -473,6 +473,50 @@ def update_status():
     flash(f'✅ Complaint status updated to "{new_status}"!', 'success')
     return redirect(url_for('admin_dashboard'))
 
+    # ----------------------------------------
+# VIEW COMPLAINT TIMELINE
+# ----------------------------------------
+@app.route('/timeline/<int:complaint_id>')
+def view_timeline(complaint_id):
+    if 'user_id' not in session:
+        flash('❌ Please login first!', 'danger')
+        return redirect(url_for('login'))
+
+    conn   = sqlite3.connect('database.db')
+    cursor = conn.cursor()
+
+    # Get complaint details
+    cursor.execute('''
+        SELECT complaints.*, users.username
+        FROM complaints
+        JOIN users ON complaints.user_id = users.id
+        WHERE complaints.id = ?
+    ''', (complaint_id,))
+    complaint = cursor.fetchone()
+
+    # Get timeline entries
+    cursor.execute('''
+        SELECT * FROM timeline
+        WHERE complaint_id = ?
+        ORDER BY id ASC
+    ''', (complaint_id,))
+    timeline = cursor.fetchall()
+
+    conn.close()
+
+    if not complaint:
+        flash('❌ Complaint not found!', 'danger')
+        return redirect(url_for('user_dashboard'))
+
+    # Security - users can only view their own complaints
+    if session['role'] != 'admin' and complaint[1] != session['user_id']:
+        flash('❌ Access denied!', 'danger')
+        return redirect(url_for('user_dashboard'))
+
+    return render_template('timeline.html',
+                           complaint = complaint,
+                           timeline  = timeline)
+
 # ----------------------------------------
 # 404 ERROR PAGE
 # ----------------------------------------
