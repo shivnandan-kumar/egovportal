@@ -19,7 +19,7 @@
     <!-- ====== FORM CARD ====== -->
     <div class="card">
 
-        <form method="POST" action="/submit-complaint">
+        <form method="POST" action="/submit-complaint" enctype="multipart/form-data">
 
             <!-- Title -->
             <div class="form-group">
@@ -69,6 +69,19 @@
                     placeholder="Describe your complaint in detail. Include location, time, and any other relevant information..."
                     required
                     rows="6"></textarea>
+            </div>
+
+            <!-- File Upload -->
+            <div class="form-group">
+                <label>📎 Attach File (Optional)</label>
+                <input
+                    type="file"
+                    name="file"
+                    accept=".jpg,.jpeg,.png,.gif,.pdf,.doc,.docx"
+                    style="width:100%; padding:10px; border:2px solid #e5e7eb; border-radius:8px; font-size:14px; font-family:inherit; background:#fafafa;">
+                <p style="color:#888; font-size:12px; margin-top:6px;">
+                    📌 Allowed: JPG, PNG, GIF, PDF, DOC (Max 5MB)
+                </p>
             </div>
 
             <!-- Info Box -->

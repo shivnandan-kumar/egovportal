@@ -245,13 +245,13 @@ window.onload = function() {
                 <tr>
                     <td style="font-weight: 600; color: #1a3c6e;">{{ complaint[0] }}</td>
 
-                    <!-- Citizen -->
+                    <!-- ✅ FIXED: complaint[9] instead of complaint[8] -->
                     <td>
                         <div style="display: flex; align-items: center; gap: 8px;">
                             <div style="width: 32px; height: 32px; background: linear-gradient(135deg, #1a3c6e, #2563ab); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-size: 13px; font-weight: 700;">
-                                {{ complaint[8][0].upper() }}
+                                {{ complaint[9][0].upper() }}
                             </div>
-                            <span style="font-weight: 500; font-size: 13px;">{{ complaint[8] }}</span>
+                            <span style="font-weight: 500; font-size: 13px;">{{ complaint[9] }}</span>
                         </div>
                     </td>
 
@@ -290,7 +290,7 @@ window.onload = function() {
                         {% endif %}
                     </td>
 
-                    <!-- ✅ NEW HISTORY BUTTON COLUMN -->
+                    <!-- History Button -->
                     <td>
                         <a href="/timeline/{{ complaint[0] }}"
                            style="background: #eff6ff; color: #1d4ed8; padding: 5px 12px; border-radius: 6px; font-size: 12px; font-weight: 600; text-decoration: none;">

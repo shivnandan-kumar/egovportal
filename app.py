@@ -10,6 +10,21 @@ app = Flask(__name__)
 app.secret_key = 'egovportal_secret_key'
 
 # ----------------------------------------
+# FILE UPLOAD CONFIGURATION
+# ----------------------------------------
+UPLOAD_FOLDER      = 'static/uploads'
+ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif', 'pdf', 'doc', 'docx'}
+app.config['UPLOAD_FOLDER']        = UPLOAD_FOLDER
+app.config['MAX_CONTENT_LENGTH']   = 5 * 1024 * 1024  # 5MB max
+
+# Create upload folder if it doesn't exist
+os.makedirs(UPLOAD_FOLDER, exist_ok=True)
+
+def allowed_file(filename):
+    return '.' in filename and \
+           filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
+
+# ----------------------------------------
 # DATABASE SETUP FUNCTION
 # ----------------------------------------
 def init_db():
@@ -69,13 +84,13 @@ def init_db():
     print("✅ Database initialized successfully!")
 
 
-
 # ----------------------------------------
 # HOME ROUTE
 # ----------------------------------------
 @app.route('/')
 def home():
     return render_template('index.html')
+
 
 # ----------------------------------------
 # ABOUT ROUTE
@@ -256,6 +271,7 @@ def user_dashboard():
                            page        = page,
                            total_pages = total_pages)
 
+
 # ----------------------------------------
 # SUBMIT COMPLAINT ROUTE
 # ----------------------------------------
@@ -277,14 +293,26 @@ def submit_complaint():
         from datetime import datetime
         date_submitted = datetime.now().strftime('%Y-%m-%d %H:%M')
 
+        # Handle file upload
+        filename = None
+        if 'file' in request.files:
+            file = request.files['file']
+            if file and file.filename != '' and allowed_file(file.filename):
+                from werkzeug.utils import secure_filename
+                filename = secure_filename(file.filename)
+                filename = f"{datetime.now().strftime('%Y%m%d%H%M%S')}_{filename}"
+                file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+
         # Save complaint to database
         conn   = sqlite3.connect('database.db')
         cursor = conn.cursor()
 
         cursor.execute('''
-            INSERT INTO complaints (user_id, title, description, category, status, priority, date_submitted)
-            VALUES (?, ?, ?, ?, 'Pending', ?, ?)
-        ''', (session['user_id'], title, description, category, priority, date_submitted))
+            INSERT INTO complaints
+            (user_id, title, description, category, status, priority, date_submitted, filename)
+            VALUES (?, ?, ?, ?, 'Pending', ?, ?, ?)
+        ''', (session['user_id'], title, description,
+              category, priority, date_submitted, filename))
 
         conn.commit()
         conn.close()
@@ -395,6 +423,7 @@ def admin_dashboard():
                            page            = page,
                            total_pages     = total_pages)
 
+
 # ----------------------------------------
 # EXPORT COMPLAINTS TO CSV
 # ----------------------------------------
@@ -456,24 +485,37 @@ def update_status():
         flash('❌ Access denied!', 'danger')
         return redirect(url_for('login'))
 
+    from datetime import datetime
+
     # Get data from form
     complaint_id = request.form['complaint_id']
     new_status   = request.form['status']
+    updated_at   = datetime.now().strftime('%Y-%m-%d %H:%M')
 
-    # Update status in database
     conn   = sqlite3.connect('database.db')
     cursor = conn.cursor()
 
+    # Update complaint status
     cursor.execute('UPDATE complaints SET status = ? WHERE id = ?',
                    (new_status, complaint_id))
+
+    # Save to timeline
+    cursor.execute('''
+        INSERT INTO timeline (complaint_id, status, comment, updated_by, updated_at)
+        VALUES (?, ?, ?, ?, ?)
+    ''', (complaint_id, new_status,
+          f'Status updated to {new_status}',
+          session['username'],
+          updated_at))
 
     conn.commit()
     conn.close()
 
-    flash(f'✅ Complaint status updated to "{new_status}"!', 'success')
+    flash(f'✅ Status updated to "{new_status}"!', 'success')
     return redirect(url_for('admin_dashboard'))
 
-    # ----------------------------------------
+
+# ----------------------------------------
 # VIEW COMPLAINT TIMELINE
 # ----------------------------------------
 @app.route('/timeline/<int:complaint_id>')
@@ -516,6 +558,16 @@ def view_timeline(complaint_id):
     return render_template('timeline.html',
                            complaint = complaint,
                            timeline  = timeline)
+
+
+# ----------------------------------------
+# SERVE UPLOADED FILES
+# ----------------------------------------
+@app.route('/uploads/<filename>')
+def uploaded_file(filename):
+    from flask import send_from_directory
+    return send_from_directory(app.config['UPLOAD_FOLDER'], filename)
+
 
 # ----------------------------------------
 # 404 ERROR PAGE

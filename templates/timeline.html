@@ -24,11 +24,13 @@
 
         <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
 
+            <!-- Title -->
             <div>
                 <p style="color: #888; font-size: 12px; font-weight: 600; margin-bottom: 4px;">TITLE</p>
                 <p style="color: #333; font-size: 15px; font-weight: 600;">{{ complaint[2] }}</p>
             </div>
 
+            <!-- Category -->
             <div>
                 <p style="color: #888; font-size: 12px; font-weight: 600; margin-bottom: 4px;">CATEGORY</p>
                 <span style="background: #eff6ff; color: #1d4ed8; padding: 4px 10px; border-radius: 6px; font-size: 13px; font-weight: 600;">
@@ -36,6 +38,7 @@
                 </span>
             </div>
 
+            <!-- Priority -->
             <div>
                 <p style="color: #888; font-size: 12px; font-weight: 600; margin-bottom: 4px;">PRIORITY</p>
                 {% if complaint[6] == 'High' %}
@@ -47,6 +50,7 @@
                 {% endif %}
             </div>
 
+            <!-- Current Status -->
             <div>
                 <p style="color: #888; font-size: 12px; font-weight: 600; margin-bottom: 4px;">CURRENT STATUS</p>
                 {% if complaint[5] == 'Pending' %}
@@ -58,16 +62,37 @@
                 {% endif %}
             </div>
 
+            <!-- Description -->
             <div style="grid-column: span 2;">
                 <p style="color: #888; font-size: 12px; font-weight: 600; margin-bottom: 4px;">DESCRIPTION</p>
                 <p style="color: #555; font-size: 14px; line-height: 1.6;">{{ complaint[3] }}</p>
             </div>
 
+            <!-- ✅ FIXED: complaint[8] = filename -->
+            {% if complaint[8] %}
+            <div style="grid-column: span 2;">
+                <p style="color: #888; font-size: 12px; font-weight: 600; margin-bottom: 8px;">📎 ATTACHED FILE</p>
+                {% set file_ext = complaint[8].rsplit('.', 1)[1].lower() %}
+                {% if file_ext in ['jpg', 'jpeg', 'png', 'gif'] %}
+                    <img src="/uploads/{{ complaint[8] }}"
+                         style="max-width: 100%; max-height: 300px; border-radius: 8px; border: 2px solid #e5e7eb;">
+                {% else %}
+                    <a href="/uploads/{{ complaint[8] }}"
+                       target="_blank"
+                       style="background: #eff6ff; color: #1d4ed8; padding: 8px 16px; border-radius: 8px; text-decoration: none; font-size: 14px; font-weight: 600;">
+                        📄 View Attached File
+                    </a>
+                {% endif %}
+            </div>
+            {% endif %}
+
+            <!-- ✅ FIXED: complaint[9] = username from JOIN -->
             <div>
                 <p style="color: #888; font-size: 12px; font-weight: 600; margin-bottom: 4px;">SUBMITTED BY</p>
-                <p style="color: #333; font-size: 14px; font-weight: 500;">{{ complaint[8] }}</p>
+                <p style="color: #333; font-size: 14px; font-weight: 500;">{{ complaint[9] }}</p>
             </div>
 
+            <!-- Date -->
             <div>
                 <p style="color: #888; font-size: 12px; font-weight: 600; margin-bottom: 4px;">DATE SUBMITTED</p>
                 <p style="color: #333; font-size: 14px;">{{ complaint[7] }}</p>
