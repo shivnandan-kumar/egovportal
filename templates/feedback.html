@@ -1,0 +1,153 @@
+{% extends 'base.html' %}
+
+{% block title %}Give Feedback - E-Governance Portal{% endblock %}
+
+{% block content %}
+
+<div style="max-width: 650px; margin: 0 auto;">
+
+    <!-- ====== HEADER ====== -->
+    <div style="background: linear-gradient(135deg, #1a3c6e 0%, #2563ab 100%); border-radius: 16px; padding: 30px 35px; margin-bottom: 25px; box-shadow: 0 4px 20px rgba(26,60,110,0.3);">
+        <h2 style="color: white; font-size: 24px; font-weight: 800; margin-bottom: 5px;">
+            ⭐ Give Feedback
+        </h2>
+        <p style="color: rgba(255,255,255,0.8); font-size: 14px;">
+            Your feedback helps us improve our services
+        </p>
+    </div>
+
+    <!-- ====== COMPLAINT INFO ====== -->
+    <div class="card" style="margin-bottom: 25px;">
+        <h3 style="color: #1a3c6e; font-size: 16px; font-weight: 700; margin-bottom: 15px;">
+            📋 Complaint Details
+        </h3>
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+            <div>
+                <p style="color: #888; font-size: 12px; font-weight: 600; margin-bottom: 4px;">TITLE</p>
+                <p style="color: #333; font-size: 15px; font-weight: 600;">{{ complaint[2] }}</p>
+            </div>
+            <div>
+                <p style="color: #888; font-size: 12px; font-weight: 600; margin-bottom: 4px;">CATEGORY</p>
+                <span style="background: #eff6ff; color: #1d4ed8; padding: 4px 10px; border-radius: 6px; font-size: 13px; font-weight: 600;">
+                    {{ complaint[4] }}
+                </span>
+            </div>
+            <div>
+                <p style="color: #888; font-size: 12px; font-weight: 600; margin-bottom: 4px;">STATUS</p>
+                <span class="badge badge-resolved">✅ Resolved</span>
+            </div>
+            <div>
+                <p style="color: #888; font-size: 12px; font-weight: 600; margin-bottom: 4px;">DATE</p>
+                <p style="color: #333; font-size: 14px;">{{ complaint[7] }}</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- ====== FEEDBACK FORM ====== -->
+    <div class="card">
+        <h3 style="color: #1a3c6e; font-size: 16px; font-weight: 700; margin-bottom: 25px;">
+            ✍️ Your Feedback
+        </h3>
+
+        <form method="POST" action="/feedback/{{ complaint[0] }}">
+
+            <!-- Star Rating -->
+            <div class="form-group">
+                <label style="display: block; margin-bottom: 12px; font-weight: 600; color: #374151; font-size: 14px;">
+                    ⭐ Rate Our Service
+                </label>
+
+                <!-- Star Rating CSS -->
+                <style>
+                    .star-rating {
+                        display: flex;
+                        flex-direction: row-reverse;
+                        justify-content: flex-end;
+                        gap: 8px;
+                        margin-bottom: 10px;
+                    }
+                    .star-rating input {
+                        display: none;
+                    }
+                    .star-rating label {
+                        font-size: 40px;
+                        color: #d1d5db;
+                        cursor: pointer;
+                        transition: color 0.2s ease;
+                    }
+                    .star-rating input:checked ~ label,
+                    .star-rating label:hover,
+                    .star-rating label:hover ~ label {
+                        color: #f59e0b;
+                    }
+                    .rating-text {
+                        font-size: 13px;
+                        color: #888;
+                        margin-top: 5px;
+                    }
+                </style>
+
+                <div class="star-rating">
+                    <input type="radio" id="star5" name="rating" value="5" required>
+                    <label for="star5" title="Excellent">★</label>
+
+                    <input type="radio" id="star4" name="rating" value="4">
+                    <label for="star4" title="Good">★</label>
+
+                    <input type="radio" id="star3" name="rating" value="3">
+                    <label for="star3" title="Average">★</label>
+
+                    <input type="radio" id="star2" name="rating" value="2">
+                    <label for="star2" title="Poor">★</label>
+
+                    <input type="radio" id="star1" name="rating" value="1">
+                    <label for="star1" title="Very Poor">★</label>
+                </div>
+
+                <!-- Rating Labels -->
+                <div style="display: flex; gap: 8px; margin-top: 5px;">
+                    <span style="font-size: 12px; color: #888; width: 48px; text-align: center;">Very Poor</span>
+                    <span style="font-size: 12px; color: #888; width: 48px; text-align: center;">Poor</span>
+                    <span style="font-size: 12px; color: #888; width: 48px; text-align: center;">Average</span>
+                    <span style="font-size: 12px; color: #888; width: 48px; text-align: center;">Good</span>
+                    <span style="font-size: 12px; color: #888; width: 48px; text-align: center;">Excellent</span>
+                </div>
+
+            </div>
+
+            <!-- Comment -->
+            <div class="form-group" style="margin-top: 25px;">
+                <label>💬 Your Comment</label>
+                <textarea
+                    name="comment"
+                    placeholder="Tell us about your experience. Was the complaint resolved satisfactorily? Any suggestions for improvement?"
+                    rows="5"
+                    required></textarea>
+            </div>
+
+            <!-- Info Box -->
+            <div style="background: #f0fdf4; border-left: 4px solid #16a34a; padding: 14px 18px; border-radius: 8px; margin-bottom: 25px;">
+                <p style="color: #16a34a; font-size: 13px; font-weight: 600; margin-bottom: 4px;">
+                    ℹ️ Your feedback matters!
+                </p>
+                <p style="color: #166534; font-size: 13px; line-height: 1.6;">
+                    Your rating and comments help us improve our services for all citizens. Feedback can only be submitted once per complaint.
+                </p>
+            </div>
+
+            <!-- Buttons -->
+            <div style="display: flex; gap: 15px; flex-wrap: wrap;">
+                <button type="submit" class="btn btn-success" style="flex: 1; padding: 13px; font-size: 15px;">
+                    ⭐ Submit Feedback
+                </button>
+                <a href="/dashboard" class="btn" style="flex: 1; padding: 13px; font-size: 15px; text-align: center; background: #f3f4f6; color: #374151; font-weight: 600;">
+                    ← Back to Dashboard
+                </a>
+            </div>
+
+        </form>
+    </div>
+
+</div>
+
+{% endblock %}

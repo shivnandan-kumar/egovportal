@@ -248,6 +248,12 @@ def user_dashboard():
     query     += f' LIMIT {per_page} OFFSET {offset}'
     cursor.execute(query, params)
     complaints = cursor.fetchall()
+
+    # Get list of complaint IDs that already have feedback
+    cursor.execute('SELECT complaint_id FROM feedback WHERE user_id = ?',
+                   (session['user_id'],))
+    feedback_given = [row[0] for row in cursor.fetchall()]
+
     conn.close()
 
     # Count all complaints for stats
@@ -260,16 +266,17 @@ def user_dashboard():
     total_pages = (total_count + per_page - 1) // per_page
 
     return render_template('dashboard.html',
-                           complaints  = complaints,
-                           total       = total,
-                           pending     = pending,
-                           inprogress  = inprogress,
-                           resolved    = resolved,
-                           search      = search,
-                           status      = status,
-                           priority    = priority,
-                           page        = page,
-                           total_pages = total_pages)
+                           complaints     = complaints,
+                           total          = total,
+                           pending        = pending,
+                           inprogress     = inprogress,
+                           resolved       = resolved,
+                           search         = search,
+                           status         = status,
+                           priority       = priority,
+                           page           = page,
+                           total_pages    = total_pages,
+                           feedback_given = feedback_given)
 
 
 # ----------------------------------------
@@ -567,6 +574,101 @@ def view_timeline(complaint_id):
 def uploaded_file(filename):
     from flask import send_from_directory
     return send_from_directory(app.config['UPLOAD_FOLDER'], filename)
+
+
+    # ----------------------------------------
+# SUBMIT FEEDBACK ROUTE
+# ----------------------------------------
+@app.route('/feedback/<int:complaint_id>', methods=['GET', 'POST'])
+def submit_feedback(complaint_id):
+    if 'user_id' not in session:
+        flash('❌ Please login first!', 'danger')
+        return redirect(url_for('login'))
+
+    conn   = sqlite3.connect('database.db')
+    cursor = conn.cursor()
+
+    # Get complaint details
+    cursor.execute('SELECT * FROM complaints WHERE id = ? AND user_id = ?',
+                   (complaint_id, session['user_id']))
+    complaint = cursor.fetchone()
+
+    if not complaint:
+        flash('❌ Complaint not found!', 'danger')
+        conn.close()
+        return redirect(url_for('user_dashboard'))
+
+    # Check complaint is resolved
+    if complaint[5] != 'Resolved':
+        flash('⚠️ You can only give feedback for resolved complaints!', 'danger')
+        conn.close()
+        return redirect(url_for('user_dashboard'))
+
+    # Check if feedback already submitted
+    cursor.execute('SELECT * FROM feedback WHERE complaint_id = ? AND user_id = ?',
+                   (complaint_id, session['user_id']))
+    existing_feedback = cursor.fetchone()
+
+    if existing_feedback:
+        flash('⚠️ You have already submitted feedback for this complaint!', 'danger')
+        conn.close()
+        return redirect(url_for('user_dashboard'))
+
+    if request.method == 'POST':
+        rating  = request.form['rating']
+        comment = request.form['comment']
+
+        from datetime import datetime
+        submitted_at = datetime.now().strftime('%Y-%m-%d %H:%M')
+
+        cursor.execute('''
+            INSERT INTO feedback (complaint_id, user_id, rating, comment, submitted_at)
+            VALUES (?, ?, ?, ?, ?)
+        ''', (complaint_id, session['user_id'], rating, comment, submitted_at))
+
+        conn.commit()
+        conn.close()
+
+        flash('✅ Thank you for your feedback!', 'success')
+        return redirect(url_for('user_dashboard'))
+
+    conn.close()
+    return render_template('feedback.html', complaint=complaint)
+
+
+# ----------------------------------------
+# VIEW ALL FEEDBACK (ADMIN)
+# ----------------------------------------
+@app.route('/admin/feedback')
+def view_feedback():
+    if 'user_id' not in session or session['role'] != 'admin':
+        flash('❌ Access denied!', 'danger')
+        return redirect(url_for('login'))
+
+    conn   = sqlite3.connect('database.db')
+    cursor = conn.cursor()
+
+    cursor.execute('''
+        SELECT feedback.*, users.username, complaints.title
+        FROM feedback
+        JOIN users ON feedback.user_id = users.id
+        JOIN complaints ON feedback.complaint_id = complaints.id
+        ORDER BY feedback.id DESC
+    ''')
+    feedbacks = cursor.fetchall()
+
+    # Calculate average rating
+    avg_rating = 0
+    if feedbacks:
+        avg_rating = sum(f[3] for f in feedbacks) / len(feedbacks)
+        avg_rating = round(avg_rating, 1)
+
+    conn.close()
+
+    return render_template('view_feedback.html',
+                           feedbacks  = feedbacks,
+                           avg_rating = avg_rating,
+                           total      = len(feedbacks))
 
 
 # ----------------------------------------

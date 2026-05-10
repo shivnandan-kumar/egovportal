@@ -106,6 +106,7 @@
                     <th>Date</th>
                     <th>Status</th>
                     <th>History</th>
+                    <th>Feedback</th>
                 </tr>
             </thead>
             <tbody>
@@ -137,13 +138,33 @@
                             <span class="badge badge-resolved">✅ Resolved</span>
                         {% endif %}
                     </td>
-                    <!-- ✅ NEW HISTORY BUTTON COLUMN -->
+
+                    <!-- History Button -->
                     <td>
                         <a href="/timeline/{{ complaint[0] }}"
                            style="background: #eff6ff; color: #1d4ed8; padding: 5px 12px; border-radius: 6px; font-size: 12px; font-weight: 600; text-decoration: none;">
                             📅 History
                         </a>
                     </td>
+
+                    <!-- ✅ NEW FEEDBACK COLUMN -->
+                    <td>
+                        {% if complaint[5] == 'Resolved' %}
+                            {% if complaint[0] in feedback_given %}
+                                <span style="background: #d1fae5; color: #065f46; padding: 5px 12px; border-radius: 6px; font-size: 12px; font-weight: 600;">
+                                    ✅ Done
+                                </span>
+                            {% else %}
+                                <a href="/feedback/{{ complaint[0] }}"
+                                   style="background: #fef3c7; color: #92400e; padding: 5px 12px; border-radius: 6px; font-size: 12px; font-weight: 600; text-decoration: none;">
+                                    ⭐ Rate
+                                </a>
+                            {% endif %}
+                        {% else %}
+                            <span style="color: #ccc; font-size: 12px;">—</span>
+                        {% endif %}
+                    </td>
+
                 </tr>
                 {% endfor %}
             </tbody>

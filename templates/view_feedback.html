@@ -1,0 +1,129 @@
+{% extends 'base.html' %}
+
+{% block title %}Feedback & Ratings - E-Governance Portal{% endblock %}
+
+{% block content %}
+
+<!-- ====== HEADER ====== -->
+<div style="background: linear-gradient(135deg, #1a3c6e 0%, #2563ab 100%); border-radius: 16px; padding: 30px 35px; margin-bottom: 25px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 4px 20px rgba(26,60,110,0.3); flex-wrap: wrap; gap: 15px;">
+    <div>
+        <h2 style="color: white; font-size: 24px; font-weight: 800; margin-bottom: 5px;">
+            ⭐ Feedback & Ratings
+        </h2>
+        <p style="color: rgba(255,255,255,0.8); font-size: 14px;">
+            View all citizen feedback and ratings
+        </p>
+    </div>
+    <a href="/admin" class="btn" style="background: white; color: #1a3c6e; font-weight: 700; padding: 12px 24px; font-size: 14px;">
+        ← Back to Dashboard
+    </a>
+</div>
+
+<!-- ====== STATS SECTION ====== -->
+<div class="stats-grid" style="margin-bottom: 25px;">
+
+    <!-- Total Feedback -->
+    <div class="stat-card stat-blue">
+        <div class="stat-number">{{ total }}</div>
+        <div class="stat-label">📋 Total Feedback</div>
+    </div>
+
+    <!-- Average Rating -->
+    <div class="stat-card stat-yellow">
+        <div class="stat-number">{{ avg_rating }}</div>
+        <div class="stat-label">⭐ Average Rating</div>
+    </div>
+
+    <!-- 5 Star Count -->
+    <div class="stat-card stat-green">
+        <div class="stat-number">{{ feedbacks | selectattr('3', 'equalto', 5) | list | length }}</div>
+        <div class="stat-label">🌟 5 Star Ratings</div>
+    </div>
+
+    <!-- 1 Star Count -->
+    <div class="stat-card stat-red">
+        <div class="stat-number">{{ feedbacks | selectattr('3', 'equalto', 1) | list | length }}</div>
+        <div class="stat-label">⭐ 1 Star Ratings</div>
+    </div>
+
+</div>
+
+<!-- ====== FEEDBACK TABLE ====== -->
+<div class="card">
+
+    <h3 style="color: #1a3c6e; font-size: 18px; font-weight: 700; margin-bottom: 20px;">
+        💬 All Citizen Feedback
+    </h3>
+
+    {% if feedbacks %}
+    <div class="table-wrapper">
+        <table>
+            <thead>
+                <tr>
+                    <th>#</th>
+                    <th>Citizen</th>
+                    <th>Complaint</th>
+                    <th>Rating</th>
+                    <th>Comment</th>
+                    <th>Date</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for feedback in feedbacks %}
+                <tr>
+                    <td style="font-weight: 600; color: #1a3c6e;">{{ feedback[0] }}</td>
+
+                    <!-- Citizen -->
+                    <td>
+                        <div style="display: flex; align-items: center; gap: 8px;">
+                            <div style="width: 32px; height: 32px; background: linear-gradient(135deg, #1a3c6e, #2563ab); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-size: 13px; font-weight: 700;">
+                                {{ feedback[6][0].upper() }}
+                            </div>
+                            <span style="font-weight: 500; font-size: 13px;">{{ feedback[6] }}</span>
+                        </div>
+                    </td>
+
+                    <!-- Complaint Title -->
+                    <td style="font-weight: 500; font-size: 13px;">{{ feedback[7] }}</td>
+
+                    <!-- Star Rating -->
+                    <td>
+                        <div style="display: flex; align-items: center; gap: 4px;">
+                            {% for i in range(1, 6) %}
+                                {% if i <= feedback[3] %}
+                                    <span style="color: #f59e0b; font-size: 18px;">★</span>
+                                {% else %}
+                                    <span style="color: #d1d5db; font-size: 18px;">★</span>
+                                {% endif %}
+                            {% endfor %}
+                            <span style="color: #888; font-size: 13px; margin-left: 5px;">({{ feedback[3] }}/5)</span>
+                        </div>
+                    </td>
+
+                    <!-- Comment -->
+                    <td style="max-width: 250px; color: #555; font-size: 13px;">
+                        {{ feedback[4] }}
+                    </td>
+
+                    <!-- Date -->
+                    <td style="color: #888; font-size: 13px;">{{ feedback[5] }}</td>
+
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    {% else %}
+    <div style="text-align: center; padding: 60px 20px;">
+        <div style="font-size: 70px; margin-bottom: 15px;">📭</div>
+        <h3 style="color: #1a3c6e; margin-bottom: 10px;">No Feedback Yet</h3>
+        <p style="color: #888; font-size: 14px;">
+            No citizens have submitted feedback yet.
+        </p>
+    </div>
+    {% endif %}
+
+</div>
+
+{% endblock %}

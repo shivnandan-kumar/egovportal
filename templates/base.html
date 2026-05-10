@@ -337,7 +337,7 @@
 
     </style>
 
-    <!-- ✅ Chart.js Library Added Here -->
+    <!-- ✅ Chart.js Library -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
 </head>
@@ -351,7 +351,9 @@
             <a href="/about">About</a>
             {% if session.user_id %}
                 {% if session.role == 'admin' %}
+                    <!-- ✅ ADDED Feedback link for admin -->
                     <a href="/admin">🛡️ Admin Panel</a>
+                    <a href="/admin/feedback">⭐ Feedback</a>
                 {% else %}
                     <a href="/dashboard">📋 My Complaints</a>
                     <a href="/submit-complaint">📝 Submit Complaint</a>
