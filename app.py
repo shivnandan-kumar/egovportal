@@ -14,8 +14,8 @@ app.secret_key = 'egovportal_secret_key'
 # ----------------------------------------
 UPLOAD_FOLDER      = 'static/uploads'
 ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif', 'pdf', 'doc', 'docx'}
-app.config['UPLOAD_FOLDER']        = UPLOAD_FOLDER
-app.config['MAX_CONTENT_LENGTH']   = 5 * 1024 * 1024  # 5MB max
+app.config['UPLOAD_FOLDER']      = UPLOAD_FOLDER
+app.config['MAX_CONTENT_LENGTH'] = 5 * 1024 * 1024  # 5MB max
 
 # Create upload folder if it doesn't exist
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
@@ -23,6 +23,7 @@ os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 def allowed_file(filename):
     return '.' in filename and \
            filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
+
 
 # ----------------------------------------
 # DATABASE SETUP FUNCTION
@@ -40,7 +41,8 @@ def init_db():
             username TEXT NOT NULL,
             email TEXT UNIQUE NOT NULL,
             password TEXT NOT NULL,
-            role TEXT DEFAULT 'user'
+            role TEXT DEFAULT 'user',
+            is_active INTEGER DEFAULT 1
         )
     ''')
 
@@ -72,11 +74,25 @@ def init_db():
         )
     ''')
 
+    # Create FEEDBACK table
+    cursor.execute('''
+        CREATE TABLE IF NOT EXISTS feedback (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            complaint_id INTEGER NOT NULL,
+            user_id INTEGER NOT NULL,
+            rating INTEGER NOT NULL,
+            comment TEXT,
+            submitted_at TEXT NOT NULL,
+            FOREIGN KEY (complaint_id) REFERENCES complaints(id),
+            FOREIGN KEY (user_id) REFERENCES users(id)
+        )
+    ''')
+
     # Create a default ADMIN account with hashed password
     admin_password = generate_password_hash('admin123')
     cursor.execute('''
-        INSERT OR IGNORE INTO users (username, email, password, role)
-        VALUES ('admin', 'admin@egov.com', ?, 'admin')
+        INSERT OR IGNORE INTO users (username, email, password, role, is_active)
+        VALUES ('admin', 'admin@egov.com', ?, 'admin', 1)
     ''', (admin_password,))
 
     conn.commit()  # Save changes
@@ -127,8 +143,8 @@ def register():
             hashed_password = generate_password_hash(password)
 
             cursor.execute('''
-                INSERT INTO users (username, email, password, role)
-                VALUES (?, ?, ?, 'user')
+                INSERT INTO users (username, email, password, role, is_active)
+                VALUES (?, ?, ?, 'user', 1)
             ''', (username, email, hashed_password))
 
             conn.commit()
@@ -163,9 +179,14 @@ def login():
         user = cursor.fetchone()
         conn.close()
 
-        # Now check if password matches the hash
+        # Check password matches the hash
         if user and not check_password_hash(user[3], password):
             user = None
+
+        # Check if user is blocked
+        if user and len(user) > 5 and user[5] == 0:
+            flash('❌ Your account has been blocked! Contact admin.', 'danger')
+            return redirect(url_for('login'))
 
         if user:
             # Save user info in session
@@ -244,8 +265,8 @@ def user_dashboard():
     total_count    = len(all_complaints)
 
     # Apply pagination
-    offset     = (page - 1) * per_page
-    query     += f' LIMIT {per_page} OFFSET {offset}'
+    offset  = (page - 1) * per_page
+    query  += f' LIMIT {per_page} OFFSET {offset}'
     cursor.execute(query, params)
     complaints = cursor.fetchall()
 
@@ -376,8 +397,8 @@ def admin_dashboard():
     total_count    = len(all_complaints)
 
     # Apply pagination
-    offset     = (page - 1) * per_page
-    paginated  = query + f' LIMIT {per_page} OFFSET {offset}'
+    offset    = (page - 1) * per_page
+    paginated = query + f' LIMIT {per_page} OFFSET {offset}'
     cursor.execute(paginated, params)
     complaints = cursor.fetchall()
 
@@ -568,15 +589,110 @@ def view_timeline(complaint_id):
 
 
 # ----------------------------------------
-# SERVE UPLOADED FILES
+# USER MANAGEMENT (ADMIN)
 # ----------------------------------------
-@app.route('/uploads/<filename>')
-def uploaded_file(filename):
-    from flask import send_from_directory
-    return send_from_directory(app.config['UPLOAD_FOLDER'], filename)
+@app.route('/admin/users')
+def manage_users():
+    if 'user_id' not in session or session['role'] != 'admin':
+        flash('❌ Access denied!', 'danger')
+        return redirect(url_for('login'))
+
+    conn   = sqlite3.connect('database.db')
+    cursor = conn.cursor()
+
+    cursor.execute('''
+        SELECT users.*, COUNT(complaints.id) as complaint_count
+        FROM users
+        LEFT JOIN complaints ON users.id = complaints.user_id
+        GROUP BY users.id
+        ORDER BY users.id DESC
+    ''')
+    users = cursor.fetchall()
+    conn.close()
+
+    # Count stats
+    total_users   = len(users)
+    active_users  = sum(1 for u in users if len(u) > 5 and u[5] == 1)
+    admin_users   = sum(1 for u in users if u[4] == 'admin')
+    blocked_users = sum(1 for u in users if len(u) > 5 and u[5] == 0)
+
+    return render_template('manage_users.html',
+                           users         = users,
+                           total_users   = total_users,
+                           active_users  = active_users,
+                           admin_users   = admin_users,
+                           blocked_users = blocked_users)
 
 
-    # ----------------------------------------
+# ----------------------------------------
+# TOGGLE USER STATUS (BLOCK/UNBLOCK)
+# ----------------------------------------
+@app.route('/admin/toggle-user/<int:user_id>')
+def toggle_user(user_id):
+    if 'user_id' not in session or session['role'] != 'admin':
+        flash('❌ Access denied!', 'danger')
+        return redirect(url_for('login'))
+
+    # Prevent admin from blocking themselves
+    if user_id == session['user_id']:
+        flash('❌ You cannot block yourself!', 'danger')
+        return redirect(url_for('manage_users'))
+
+    conn   = sqlite3.connect('database.db')
+    cursor = conn.cursor()
+
+    # Get current status
+    cursor.execute('SELECT is_active, username FROM users WHERE id = ?', (user_id,))
+    user = cursor.fetchone()
+
+    if user:
+        new_status  = 0 if user[0] == 1 else 1
+        cursor.execute('UPDATE users SET is_active = ? WHERE id = ?',
+                       (new_status, user_id))
+        conn.commit()
+
+        status_text = 'activated' if new_status == 1 else 'blocked'
+        flash(f'✅ User "{user[1]}" has been {status_text}!', 'success')
+
+    conn.close()
+    return redirect(url_for('manage_users'))
+
+
+# ----------------------------------------
+# TOGGLE USER ROLE (PROMOTE/DEMOTE)
+# ----------------------------------------
+@app.route('/admin/toggle-role/<int:user_id>')
+def toggle_role(user_id):
+    if 'user_id' not in session or session['role'] != 'admin':
+        flash('❌ Access denied!', 'danger')
+        return redirect(url_for('login'))
+
+    # Prevent admin from demoting themselves
+    if user_id == session['user_id']:
+        flash('❌ You cannot change your own role!', 'danger')
+        return redirect(url_for('manage_users'))
+
+    conn   = sqlite3.connect('database.db')
+    cursor = conn.cursor()
+
+    # Get current role
+    cursor.execute('SELECT role, username FROM users WHERE id = ?', (user_id,))
+    user = cursor.fetchone()
+
+    if user:
+        new_role = 'user' if user[0] == 'admin' else 'admin'
+        cursor.execute('UPDATE users SET role = ? WHERE id = ?',
+                       (new_role, user_id))
+        conn.commit()
+
+        action_text = 'promoted to Admin' if new_role == 'admin' else 'demoted to User'
+        flash(f'✅ User "{user[1]}" has been {action_text}!', 'success')
+
+    conn.close()
+    return redirect(url_for('manage_users'))
+
+
+# ----------------------------------------
 # SUBMIT FEEDBACK ROUTE
 # ----------------------------------------
 @app.route('/feedback/<int:complaint_id>', methods=['GET', 'POST'])
@@ -669,6 +785,15 @@ def view_feedback():
                            feedbacks  = feedbacks,
                            avg_rating = avg_rating,
                            total      = len(feedbacks))
+
+
+# ----------------------------------------
+# SERVE UPLOADED FILES
+# ----------------------------------------
+@app.route('/uploads/<filename>')
+def uploaded_file(filename):
+    from flask import send_from_directory
+    return send_from_directory(app.config['UPLOAD_FOLDER'], filename)
 
 
 # ----------------------------------------

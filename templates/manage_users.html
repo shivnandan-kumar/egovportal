@@ -1,0 +1,161 @@
+{% extends 'base.html' %}
+
+{% block title %}Manage Users - E-Governance Portal{% endblock %}
+
+{% block content %}
+
+<!-- ====== HEADER ====== -->
+<div style="background: linear-gradient(135deg, #1a3c6e 0%, #2563ab 100%); border-radius: 16px; padding: 30px 35px; margin-bottom: 25px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 4px 20px rgba(26,60,110,0.3); flex-wrap: wrap; gap: 15px;">
+    <div>
+        <h2 style="color: white; font-size: 24px; font-weight: 800; margin-bottom: 5px;">
+            👥 User Management
+        </h2>
+        <p style="color: rgba(255,255,255,0.8); font-size: 14px;">
+            Manage all registered citizens and admins
+        </p>
+    </div>
+    <a href="/admin" class="btn" style="background: white; color: #1a3c6e; font-weight: 700; padding: 12px 24px; font-size: 14px;">
+        ← Back to Dashboard
+    </a>
+</div>
+
+<!-- ====== STATS SECTION ====== -->
+<div class="stats-grid" style="margin-bottom: 25px;">
+
+    <div class="stat-card stat-blue">
+        <div class="stat-number">{{ total_users }}</div>
+        <div class="stat-label">👥 Total Users</div>
+    </div>
+
+    <div class="stat-card stat-green">
+        <div class="stat-number">{{ active_users }}</div>
+        <div class="stat-label">✅ Active Users</div>
+    </div>
+
+    <div class="stat-card stat-yellow">
+        <div class="stat-number">{{ admin_users }}</div>
+        <div class="stat-label">🛡️ Admins</div>
+    </div>
+
+    <div class="stat-card stat-red">
+        <div class="stat-number">{{ blocked_users }}</div>
+        <div class="stat-label">🚫 Blocked Users</div>
+    </div>
+
+</div>
+
+<!-- ====== USERS TABLE ====== -->
+<div class="card">
+
+    <h3 style="color: #1a3c6e; font-size: 18px; font-weight: 700; margin-bottom: 20px;">
+        👥 All Registered Users
+    </h3>
+
+    {% if users %}
+    <div class="table-wrapper">
+        <table>
+            <thead>
+                <tr>
+                    <th>#</th>
+                    <th>User</th>
+                    <th>Email</th>
+                    <th>Role</th>
+                    <th>Complaints</th>
+                    <th>Status</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for user in users %}
+                <tr>
+                    <td style="font-weight: 600; color: #1a3c6e;">{{ user[0] }}</td>
+
+                    <!-- User Avatar & Name -->
+                    <td>
+                        <div style="display: flex; align-items: center; gap: 10px;">
+                            <div style="width: 36px; height: 36px; background: linear-gradient(135deg, #1a3c6e, #2563ab); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-size: 14px; font-weight: 700; flex-shrink: 0;">
+                                {{ user[1][0].upper() }}
+                            </div>
+                            <div>
+                                <p style="font-weight: 600; font-size: 14px; color: #333; margin: 0;">{{ user[1] }}</p>
+                                {% if user[0] == session.user_id %}
+                                <span style="font-size: 11px; color: #2563ab; font-weight: 600;">(You)</span>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </td>
+
+                    <!-- Email -->
+                    <td style="color: #555; font-size: 13px;">{{ user[2] }}</td>
+
+                    <!-- Role -->
+                    <td>
+                        {% if user[4] == 'admin' %}
+                            <span style="background: #eff6ff; color: #1d4ed8; padding: 5px 12px; border-radius: 20px; font-size: 12px; font-weight: 600;">
+                                🛡️ Admin
+                            </span>
+                        {% else %}
+                            <span style="background: #f0fdf4; color: #16a34a; padding: 5px 12px; border-radius: 20px; font-size: 12px; font-weight: 600;">
+                                👤 User
+                            </span>
+                        {% endif %}
+                    </td>
+
+                    <!-- Complaint Count -->
+                    <td>
+                        <span style="background: #f0f4f8; color: #1a3c6e; padding: 5px 12px; border-radius: 20px; font-size: 12px; font-weight: 600;">
+                            {{ user[6] }} complaints
+                        </span>
+                    </td>
+
+                    <!-- Status -->
+                    <td>
+                        {% if user[5] == 1 %}
+                            <span class="badge badge-resolved">✅ Active</span>
+                        {% else %}
+                            <span class="badge badge-high">🚫 Blocked</span>
+                        {% endif %}
+                    </td>
+
+                    <!-- Actions -->
+                    <td>
+                        {% if user[0] != session.user_id %}
+                        <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+
+                            <!-- Block/Unblock Button -->
+                            <a href="/admin/toggle-user/{{ user[0] }}"
+                               style="padding: 5px 12px; border-radius: 6px; font-size: 12px; font-weight: 600; text-decoration: none;
+                               {% if user[5] == 1 %}background: #fee2e2; color: #991b1b;{% else %}background: #d1fae5; color: #065f46;{% endif %}">
+                                {% if user[5] == 1 %}🚫 Block{% else %}✅ Unblock{% endif %}
+                            </a>
+
+                            <!-- Promote/Demote Button -->
+                            <a href="/admin/toggle-role/{{ user[0] }}"
+                               style="padding: 5px 12px; border-radius: 6px; font-size: 12px; font-weight: 600; text-decoration: none;
+                               {% if user[4] == 'admin' %}background: #fef3c7; color: #92400e;{% else %}background: #eff6ff; color: #1d4ed8;{% endif %}">
+                                {% if user[4] == 'admin' %}👤 Demote{% else %}🛡️ Promote{% endif %}
+                            </a>
+
+                        </div>
+                        {% else %}
+                        <span style="color: #ccc; font-size: 12px;">— (You)</span>
+                        {% endif %}
+                    </td>
+
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    {% else %}
+    <div style="text-align: center; padding: 60px 20px;">
+        <div style="font-size: 70px; margin-bottom: 15px;">📭</div>
+        <h3 style="color: #1a3c6e; margin-bottom: 10px;">No Users Found</h3>
+        <p style="color: #888; font-size: 14px;">No users have registered yet.</p>
+    </div>
+    {% endif %}
+
+</div>
+
+{% endblock %}
