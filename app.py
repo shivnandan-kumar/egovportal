@@ -788,6 +788,93 @@ def view_feedback():
 
 
 # ----------------------------------------
+# USER PROFILE ROUTE
+# ----------------------------------------
+@app.route('/profile', methods=['GET', 'POST'])
+def profile():
+    if 'user_id' not in session:
+        flash('❌ Please login first!', 'danger')
+        return redirect(url_for('login'))
+
+    conn   = sqlite3.connect('database.db')
+    cursor = conn.cursor()
+
+    if request.method == 'POST':
+        action = request.form.get('action')
+
+        # ---- Update Username ----
+        if action == 'update_username':
+            new_username = request.form['username']
+
+            cursor.execute('UPDATE users SET username = ? WHERE id = ?',
+                           (new_username, session['user_id']))
+            conn.commit()
+
+            # Update session
+            session['username'] = new_username
+            flash('✅ Username updated successfully!', 'success')
+
+        # ---- Change Password ----
+        elif action == 'change_password':
+            current_password = request.form['current_password']
+            new_password     = request.form['new_password']
+            confirm_password = request.form['confirm_password']
+
+            # Get current password from database
+            cursor.execute('SELECT password FROM users WHERE id = ?',
+                           (session['user_id'],))
+            user = cursor.fetchone()
+
+            if not check_password_hash(user[0], current_password):
+                flash('❌ Current password is incorrect!', 'danger')
+            elif new_password != confirm_password:
+                flash('❌ New passwords do not match!', 'danger')
+            elif len(new_password) < 6:
+                flash('❌ Password must be at least 6 characters!', 'danger')
+            else:
+                hashed = generate_password_hash(new_password)
+                cursor.execute('UPDATE users SET password = ? WHERE id = ?',
+                               (hashed, session['user_id']))
+                conn.commit()
+                flash('✅ Password changed successfully!', 'success')
+
+        conn.close()
+        return redirect(url_for('profile'))
+
+    # GET request - fetch user data
+    cursor.execute('''
+        SELECT users.*,
+               COUNT(complaints.id) as total_complaints
+        FROM users
+        LEFT JOIN complaints ON users.id = complaints.user_id
+        WHERE users.id = ?
+        GROUP BY users.id
+    ''', (session['user_id'],))
+    user = cursor.fetchone()
+
+    # Get complaint stats
+    cursor.execute('SELECT COUNT(*) FROM complaints WHERE user_id = ? AND status = ?',
+                   (session['user_id'], 'Pending'))
+    pending = cursor.fetchone()[0]
+
+    cursor.execute('SELECT COUNT(*) FROM complaints WHERE user_id = ? AND status = ?',
+                   (session['user_id'], 'Resolved'))
+    resolved = cursor.fetchone()[0]
+
+    cursor.execute('SELECT COUNT(*) FROM feedback WHERE user_id = ?',
+                   (session['user_id'],))
+    feedbacks = cursor.fetchone()[0]
+
+    conn.close()
+
+    return render_template('profile.html',
+                           user      = user,
+                           pending   = pending,
+                           resolved  = resolved,
+                           feedbacks = feedbacks)
+
+
+# ----------------------------------------
 # SERVE UPLOADED FILES
 # ----------------------------------------
 @app.route('/uploads/<filename>')

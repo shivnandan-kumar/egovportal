@@ -1,0 +1,158 @@
+{% extends 'base.html' %}
+
+{% block title %}My Profile - E-Governance Portal{% endblock %}
+
+{% block content %}
+
+<div style="max-width: 800px; margin: 0 auto;">
+
+    <!-- ====== HEADER ====== -->
+    <div style="background: linear-gradient(135deg, #1a3c6e 0%, #2563ab 100%); border-radius: 16px; padding: 30px 35px; margin-bottom: 25px; box-shadow: 0 4px 20px rgba(26,60,110,0.3);">
+        <h2 style="color: white; font-size: 24px; font-weight: 800; margin-bottom: 5px;">
+            👤 My Profile
+        </h2>
+        <p style="color: rgba(255,255,255,0.8); font-size: 14px;">
+            View and manage your account information
+        </p>
+    </div>
+
+    <!-- ====== PROFILE CARD ====== -->
+    <div class="card" style="margin-bottom: 25px;">
+
+        <div style="display: flex; align-items: center; gap: 25px; flex-wrap: wrap;">
+
+            <!-- Avatar -->
+            <div style="width: 80px; height: 80px; background: linear-gradient(135deg, #1a3c6e, #2563ab); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-size: 32px; font-weight: 700; flex-shrink: 0;">
+                {{ user[1][0].upper() }}
+            </div>
+
+            <!-- Info -->
+            <div style="flex: 1;">
+                <h3 style="color: #1a3c6e; font-size: 22px; font-weight: 800; margin-bottom: 5px;">
+                    {{ user[1] }}
+                </h3>
+                <p style="color: #888; font-size: 14px; margin-bottom: 8px;">
+                    📧 {{ user[2] }}
+                </p>
+                <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+                    {% if user[4] == 'admin' %}
+                        <span style="background: #eff6ff; color: #1d4ed8; padding: 5px 14px; border-radius: 20px; font-size: 13px; font-weight: 600;">
+                            🛡️ Admin
+                        </span>
+                    {% else %}
+                        <span style="background: #f0fdf4; color: #16a34a; padding: 5px 14px; border-radius: 20px; font-size: 13px; font-weight: 600;">
+                            👤 Citizen
+                        </span>
+                    {% endif %}
+                    <span style="background: #d1fae5; color: #065f46; padding: 5px 14px; border-radius: 20px; font-size: 13px; font-weight: 600;">
+                        ✅ Active Account
+                    </span>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- Stats Row -->
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 15px; margin-top: 25px; padding-top: 25px; border-top: 1px solid #f0f4f8;">
+
+            <div style="text-align: center;">
+                <div style="font-size: 28px; font-weight: 800; color: #1a3c6e;">{{ user[6] }}</div>
+                <div style="font-size: 13px; color: #888; margin-top: 4px;">Total Complaints</div>
+            </div>
+
+            <div style="text-align: center;">
+                <div style="font-size: 28px; font-weight: 800; color: #f59e0b;">{{ pending }}</div>
+                <div style="font-size: 13px; color: #888; margin-top: 4px;">Pending</div>
+            </div>
+
+            <div style="text-align: center;">
+                <div style="font-size: 28px; font-weight: 800; color: #16a34a;">{{ resolved }}</div>
+                <div style="font-size: 13px; color: #888; margin-top: 4px;">Resolved</div>
+            </div>
+
+            <div style="text-align: center;">
+                <div style="font-size: 28px; font-weight: 800; color: #2563ab;">{{ feedbacks }}</div>
+                <div style="font-size: 13px; color: #888; margin-top: 4px;">Feedbacks Given</div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- ====== UPDATE USERNAME ====== -->
+    <div class="card" style="margin-bottom: 25px;">
+        <h3 style="color: #1a3c6e; font-size: 16px; font-weight: 700; margin-bottom: 20px;">
+            ✏️ Update Username
+        </h3>
+
+        <form method="POST" action="/profile">
+            <input type="hidden" name="action" value="update_username">
+
+            <div class="form-group">
+                <label>👤 New Username</label>
+                <input
+                    type="text"
+                    name="username"
+                    value="{{ user[1] }}"
+                    required>
+            </div>
+
+            <button type="submit" class="btn btn-primary" style="padding: 11px 28px;">
+                ✅ Update Username
+            </button>
+        </form>
+    </div>
+
+    <!-- ====== CHANGE PASSWORD ====== -->
+    <div class="card" style="margin-bottom: 25px;">
+        <h3 style="color: #1a3c6e; font-size: 16px; font-weight: 700; margin-bottom: 20px;">
+            🔒 Change Password
+        </h3>
+
+        <form method="POST" action="/profile">
+            <input type="hidden" name="action" value="change_password">
+
+            <div class="form-group">
+                <label>🔒 Current Password</label>
+                <input
+                    type="password"
+                    name="current_password"
+                    placeholder="Enter your current password"
+                    required>
+            </div>
+
+            <div class="form-group">
+                <label>🔑 New Password</label>
+                <input
+                    type="password"
+                    name="new_password"
+                    placeholder="Enter new password (min 6 characters)"
+                    required>
+            </div>
+
+            <div class="form-group">
+                <label>🔑 Confirm New Password</label>
+                <input
+                    type="password"
+                    name="confirm_password"
+                    placeholder="Re-enter new password"
+                    required>
+            </div>
+
+            <button type="submit" class="btn btn-primary" style="padding: 11px 28px;">
+                🔒 Change Password
+            </button>
+        </form>
+    </div>
+
+    <!-- ====== BACK BUTTON ====== -->
+    <div style="text-align: center; margin-bottom: 20px;">
+        {% if session.role == 'admin' %}
+            <a href="/admin" class="btn btn-primary">← Back to Admin Dashboard</a>
+        {% else %}
+            <a href="/dashboard" class="btn btn-primary">← Back to My Dashboard</a>
+        {% endif %}
+    </div>
+
+</div>
+
+{% endblock %}
