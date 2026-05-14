@@ -46,7 +46,7 @@ def init_db():
         )
     ''')
 
-    # Create COMPLAINTS table
+    # ✅ FIXED: Create COMPLAINTS table with filename and ref_number
     cursor.execute('''
         CREATE TABLE IF NOT EXISTS complaints (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -57,6 +57,8 @@ def init_db():
             status TEXT DEFAULT 'Pending',
             priority TEXT DEFAULT 'Medium',
             date_submitted TEXT NOT NULL,
+            filename TEXT DEFAULT NULL,
+            ref_number TEXT DEFAULT NULL,
             FOREIGN KEY (user_id) REFERENCES users(id)
         )
     ''')
@@ -123,23 +125,19 @@ def about():
 def register():
     if request.method == 'POST':
 
-        # Get data from the form
         username = request.form['username']
         email    = request.form['email']
         password = request.form['password']
         confirm  = request.form['confirm_password']
 
-        # Check if passwords match
         if password != confirm:
             flash('❌ Passwords do not match!', 'danger')
             return redirect(url_for('register'))
 
-        # Save user to database
         try:
             conn   = sqlite3.connect('database.db')
             cursor = conn.cursor()
 
-            # Hash the password before saving
             hashed_password = generate_password_hash(password)
 
             cursor.execute('''
@@ -167,11 +165,9 @@ def register():
 def login():
     if request.method == 'POST':
 
-        # Get data from the form
         email    = request.form['email']
         password = request.form['password']
 
-        # Find user by email only first
         conn   = sqlite3.connect('database.db')
         cursor = conn.cursor()
 
@@ -179,24 +175,20 @@ def login():
         user = cursor.fetchone()
         conn.close()
 
-        # Check password matches the hash
         if user and not check_password_hash(user[3], password):
             user = None
 
-        # Check if user is blocked
         if user and len(user) > 5 and user[5] == 0:
             flash('❌ Your account has been blocked! Contact admin.', 'danger')
             return redirect(url_for('login'))
 
         if user:
-            # Save user info in session
             session['user_id']  = user[0]
             session['username'] = user[1]
             session['role']     = user[4]
 
             flash(f'✅ Welcome back, {user[1]}!', 'success')
 
-            # Redirect based on role
             if user[4] == 'admin':
                 return redirect(url_for('admin_dashboard'))
             else:
@@ -231,14 +223,12 @@ def user_dashboard():
         flash('⚠️ Admins cannot access the user dashboard!', 'danger')
         return redirect(url_for('admin_dashboard'))
 
-    # Get search and filter values from URL
     search   = request.args.get('search', '')
     status   = request.args.get('status', '')
     priority = request.args.get('priority', '')
     page     = int(request.args.get('page', 1))
     per_page = 5
 
-    # Build query based on filters
     query  = 'SELECT * FROM complaints WHERE user_id = ?'
     params = [session['user_id']]
 
@@ -259,31 +249,26 @@ def user_dashboard():
     conn   = sqlite3.connect('database.db')
     cursor = conn.cursor()
 
-    # Get total count for pagination
     cursor.execute(query, params)
     all_complaints = cursor.fetchall()
     total_count    = len(all_complaints)
 
-    # Apply pagination
     offset  = (page - 1) * per_page
     query  += f' LIMIT {per_page} OFFSET {offset}'
     cursor.execute(query, params)
     complaints = cursor.fetchall()
 
-    # Get list of complaint IDs that already have feedback
     cursor.execute('SELECT complaint_id FROM feedback WHERE user_id = ?',
                    (session['user_id'],))
     feedback_given = [row[0] for row in cursor.fetchall()]
 
     conn.close()
 
-    # Count all complaints for stats
     total      = len(all_complaints)
     pending    = sum(1 for c in all_complaints if c[5] == 'Pending')
     inprogress = sum(1 for c in all_complaints if c[5] == 'In Progress')
     resolved   = sum(1 for c in all_complaints if c[5] == 'Resolved')
 
-    # Pagination info
     total_pages = (total_count + per_page - 1) // per_page
 
     return render_template('dashboard.html',
@@ -311,15 +296,21 @@ def submit_complaint():
 
     if request.method == 'POST':
 
-        # Get data from the form
         title       = request.form['title']
         category    = request.form['category']
         description = request.form['description']
         priority    = request.form['priority']
 
-        # Get current date
         from datetime import datetime
         date_submitted = datetime.now().strftime('%Y-%m-%d %H:%M')
+
+        # Generate unique reference number
+        conn_ref   = sqlite3.connect('database.db')
+        cursor_ref = conn_ref.cursor()
+        cursor_ref.execute('SELECT COUNT(*) FROM complaints')
+        count      = cursor_ref.fetchone()[0] + 1
+        conn_ref.close()
+        ref_number = f"CMP-{datetime.now().strftime('%Y')}-{count:04d}"
 
         # Handle file upload
         filename = None
@@ -331,21 +322,20 @@ def submit_complaint():
                 filename = f"{datetime.now().strftime('%Y%m%d%H%M%S')}_{filename}"
                 file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
 
-        # Save complaint to database
         conn   = sqlite3.connect('database.db')
         cursor = conn.cursor()
 
         cursor.execute('''
             INSERT INTO complaints
-            (user_id, title, description, category, status, priority, date_submitted, filename)
-            VALUES (?, ?, ?, ?, 'Pending', ?, ?, ?)
+            (user_id, title, description, category, status, priority, date_submitted, filename, ref_number)
+            VALUES (?, ?, ?, ?, 'Pending', ?, ?, ?, ?)
         ''', (session['user_id'], title, description,
-              category, priority, date_submitted, filename))
+              category, priority, date_submitted, filename, ref_number))
 
         conn.commit()
         conn.close()
 
-        flash('✅ Complaint submitted successfully!', 'success')
+        flash(f'✅ Complaint submitted! Reference: {ref_number}', 'success')
         return redirect(url_for('user_dashboard'))
 
     return render_template('submit_complaint.html')
@@ -360,14 +350,12 @@ def admin_dashboard():
         flash('❌ Access denied!', 'danger')
         return redirect(url_for('login'))
 
-    # Get search and filter values from URL
     search   = request.args.get('search', '')
     status   = request.args.get('status', '')
     priority = request.args.get('priority', '')
     page     = int(request.args.get('page', 1))
     per_page = 5
 
-    # Build query
     query  = '''SELECT complaints.*, users.username
                 FROM complaints
                 JOIN users ON complaints.user_id = users.id
@@ -391,24 +379,20 @@ def admin_dashboard():
     conn   = sqlite3.connect('database.db')
     cursor = conn.cursor()
 
-    # Get all for stats and charts
     cursor.execute(query, params)
     all_complaints = cursor.fetchall()
     total_count    = len(all_complaints)
 
-    # Apply pagination
     offset    = (page - 1) * per_page
     paginated = query + f' LIMIT {per_page} OFFSET {offset}'
     cursor.execute(paginated, params)
     complaints = cursor.fetchall()
 
-    # Count by status for stats
     total      = total_count
     pending    = sum(1 for c in all_complaints if c[5] == 'Pending')
     inprogress = sum(1 for c in all_complaints if c[5] == 'In Progress')
     resolved   = sum(1 for c in all_complaints if c[5] == 'Resolved')
 
-    # Chart data
     cursor.execute('''
         SELECT category, COUNT(*) as count
         FROM complaints
@@ -426,13 +410,11 @@ def admin_dashboard():
 
     conn.close()
 
-    # Prepare chart data
     category_labels = [row[0] for row in category_data]
     category_counts = [row[1] for row in category_data]
     priority_labels = [row[0] for row in priority_data]
     priority_counts = [row[1] for row in priority_data]
 
-    # Pagination info
     total_pages = (total_count + per_page - 1) // per_page
 
     return render_template('admin_dashboard.html',
@@ -469,7 +451,7 @@ def export_csv():
     cursor = conn.cursor()
 
     cursor.execute('''
-        SELECT complaints.id, users.username, complaints.title,
+        SELECT complaints.id, complaints.ref_number, users.username, complaints.title,
                complaints.category, complaints.priority,
                complaints.status, complaints.date_submitted
         FROM complaints
@@ -479,17 +461,14 @@ def export_csv():
     complaints = cursor.fetchall()
     conn.close()
 
-    # Create CSV in memory
     output = io.StringIO()
     writer = csv.writer(output)
 
-    # Write header row
     writer.writerow([
-        'ID', 'Citizen Name', 'Title',
+        'ID', 'Reference No', 'Citizen Name', 'Title',
         'Category', 'Priority', 'Status', 'Date Submitted'
     ])
 
-    # Write data rows
     for complaint in complaints:
         writer.writerow(complaint)
 
@@ -515,7 +494,6 @@ def update_status():
 
     from datetime import datetime
 
-    # Get data from form
     complaint_id = request.form['complaint_id']
     new_status   = request.form['status']
     updated_at   = datetime.now().strftime('%Y-%m-%d %H:%M')
@@ -523,11 +501,9 @@ def update_status():
     conn   = sqlite3.connect('database.db')
     cursor = conn.cursor()
 
-    # Update complaint status
     cursor.execute('UPDATE complaints SET status = ? WHERE id = ?',
                    (new_status, complaint_id))
 
-    # Save to timeline
     cursor.execute('''
         INSERT INTO timeline (complaint_id, status, comment, updated_by, updated_at)
         VALUES (?, ?, ?, ?, ?)
@@ -555,7 +531,6 @@ def view_timeline(complaint_id):
     conn   = sqlite3.connect('database.db')
     cursor = conn.cursor()
 
-    # Get complaint details
     cursor.execute('''
         SELECT complaints.*, users.username
         FROM complaints
@@ -564,7 +539,6 @@ def view_timeline(complaint_id):
     ''', (complaint_id,))
     complaint = cursor.fetchone()
 
-    # Get timeline entries
     cursor.execute('''
         SELECT * FROM timeline
         WHERE complaint_id = ?
@@ -578,7 +552,6 @@ def view_timeline(complaint_id):
         flash('❌ Complaint not found!', 'danger')
         return redirect(url_for('user_dashboard'))
 
-    # Security - users can only view their own complaints
     if session['role'] != 'admin' and complaint[1] != session['user_id']:
         flash('❌ Access denied!', 'danger')
         return redirect(url_for('user_dashboard'))
@@ -610,7 +583,6 @@ def manage_users():
     users = cursor.fetchall()
     conn.close()
 
-    # Count stats
     total_users   = len(users)
     active_users  = sum(1 for u in users if len(u) > 5 and u[5] == 1)
     admin_users   = sum(1 for u in users if u[4] == 'admin')
@@ -633,7 +605,6 @@ def toggle_user(user_id):
         flash('❌ Access denied!', 'danger')
         return redirect(url_for('login'))
 
-    # Prevent admin from blocking themselves
     if user_id == session['user_id']:
         flash('❌ You cannot block yourself!', 'danger')
         return redirect(url_for('manage_users'))
@@ -641,7 +612,6 @@ def toggle_user(user_id):
     conn   = sqlite3.connect('database.db')
     cursor = conn.cursor()
 
-    # Get current status
     cursor.execute('SELECT is_active, username FROM users WHERE id = ?', (user_id,))
     user = cursor.fetchone()
 
@@ -667,7 +637,6 @@ def toggle_role(user_id):
         flash('❌ Access denied!', 'danger')
         return redirect(url_for('login'))
 
-    # Prevent admin from demoting themselves
     if user_id == session['user_id']:
         flash('❌ You cannot change your own role!', 'danger')
         return redirect(url_for('manage_users'))
@@ -675,7 +644,6 @@ def toggle_role(user_id):
     conn   = sqlite3.connect('database.db')
     cursor = conn.cursor()
 
-    # Get current role
     cursor.execute('SELECT role, username FROM users WHERE id = ?', (user_id,))
     user = cursor.fetchone()
 
@@ -704,7 +672,6 @@ def submit_feedback(complaint_id):
     conn   = sqlite3.connect('database.db')
     cursor = conn.cursor()
 
-    # Get complaint details
     cursor.execute('SELECT * FROM complaints WHERE id = ? AND user_id = ?',
                    (complaint_id, session['user_id']))
     complaint = cursor.fetchone()
@@ -714,13 +681,11 @@ def submit_feedback(complaint_id):
         conn.close()
         return redirect(url_for('user_dashboard'))
 
-    # Check complaint is resolved
     if complaint[5] != 'Resolved':
         flash('⚠️ You can only give feedback for resolved complaints!', 'danger')
         conn.close()
         return redirect(url_for('user_dashboard'))
 
-    # Check if feedback already submitted
     cursor.execute('SELECT * FROM feedback WHERE complaint_id = ? AND user_id = ?',
                    (complaint_id, session['user_id']))
     existing_feedback = cursor.fetchone()
@@ -773,7 +738,6 @@ def view_feedback():
     ''')
     feedbacks = cursor.fetchall()
 
-    # Calculate average rating
     avg_rating = 0
     if feedbacks:
         avg_rating = sum(f[3] for f in feedbacks) / len(feedbacks)
@@ -802,25 +766,19 @@ def profile():
     if request.method == 'POST':
         action = request.form.get('action')
 
-        # ---- Update Username ----
         if action == 'update_username':
             new_username = request.form['username']
-
             cursor.execute('UPDATE users SET username = ? WHERE id = ?',
                            (new_username, session['user_id']))
             conn.commit()
-
-            # Update session
             session['username'] = new_username
             flash('✅ Username updated successfully!', 'success')
 
-        # ---- Change Password ----
         elif action == 'change_password':
             current_password = request.form['current_password']
             new_password     = request.form['new_password']
             confirm_password = request.form['confirm_password']
 
-            # Get current password from database
             cursor.execute('SELECT password FROM users WHERE id = ?',
                            (session['user_id'],))
             user = cursor.fetchone()
@@ -841,7 +799,6 @@ def profile():
         conn.close()
         return redirect(url_for('profile'))
 
-    # GET request - fetch user data
     cursor.execute('''
         SELECT users.*,
                COUNT(complaints.id) as total_complaints
@@ -852,7 +809,6 @@ def profile():
     ''', (session['user_id'],))
     user = cursor.fetchone()
 
-    # Get complaint stats
     cursor.execute('SELECT COUNT(*) FROM complaints WHERE user_id = ? AND status = ?',
                    (session['user_id'], 'Pending'))
     pending = cursor.fetchone()[0]
