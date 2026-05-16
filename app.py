@@ -28,6 +28,19 @@ def allowed_file(filename):
 # ----------------------------------------
 # DATABASE SETUP FUNCTION
 # ----------------------------------------
+import psycopg2
+import os
+
+def get_db_connection():
+    # Render se jo External URL copy kiya tha, use yahan paste karein
+    db_url = "postgres://egov_portal_qczh_user:apka_password@hostname/egov_portal_qczh"
+    conn = psycopg2.connect(db_url, sslmode='require')
+    return conn
+
+def init_db():
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    # ... baki table banane wala code niche ...
 def init_db():
     """This function creates the database and tables if they don't exist"""
 
