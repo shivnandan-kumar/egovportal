@@ -852,3 +852,6 @@ def page_not_found(e):
 if __name__ == '__main__':
     init_db()   # Setup database FIRST, then start app
     app.run(debug=True)
+    # Ye line Render par database create karne ke liye zaroori hai
+with app.app_context():
+    init_db()
