@@ -59,6 +59,7 @@ def init_db():
             date_submitted TEXT NOT NULL,
             filename TEXT DEFAULT NULL,
             ref_number TEXT DEFAULT NULL,
+            area TEXT DEFAULT NULL,      
             FOREIGN KEY (user_id) REFERENCES users(id)
         )
     ''')
@@ -285,9 +286,6 @@ def user_dashboard():
                            feedback_given = feedback_given)
 
 
-# ----------------------------------------
-# SUBMIT COMPLAINT ROUTE
-# ----------------------------------------
 @app.route('/submit-complaint', methods=['GET', 'POST'])
 def submit_complaint():
     if 'user_id' not in session:
@@ -300,6 +298,7 @@ def submit_complaint():
         category    = request.form['category']
         description = request.form['description']
         priority    = request.form['priority']
+        area        = request.form['area']
 
         from datetime import datetime
         date_submitted = datetime.now().strftime('%Y-%m-%d %H:%M')
@@ -327,10 +326,10 @@ def submit_complaint():
 
         cursor.execute('''
             INSERT INTO complaints
-            (user_id, title, description, category, status, priority, date_submitted, filename, ref_number)
-            VALUES (?, ?, ?, ?, 'Pending', ?, ?, ?, ?)
+            (user_id, title, description, category, status, priority, date_submitted, filename, ref_number, area)
+            VALUES (?, ?, ?, ?, 'Pending', ?, ?, ?, ?, ?)
         ''', (session['user_id'], title, description,
-              category, priority, date_submitted, filename, ref_number))
+              category, priority, date_submitted, filename, ref_number, area))
 
         conn.commit()
         conn.close()

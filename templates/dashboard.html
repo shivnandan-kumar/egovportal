@@ -102,6 +102,7 @@
                     <th>Ref No</th>
                     <th>Title</th>
                     <th>Category</th>
+                    <th>Area</th>
                     <th>Priority</th>
                     <th>Date</th>
                     <th>Status</th>
@@ -122,6 +123,11 @@
                     <td>
                         <span style="background: #eff6ff; color: #1d4ed8; padding: 4px 10px; border-radius: 6px; font-size: 12px; font-weight: 600;">
                             {{ complaint[4] }}
+                        </span>
+                    </td>
+                    <td>
+                        <span style="background: #f3f4f6; color: #374151; padding: 4px 10px; border-radius: 6px; font-size: 12px; font-weight: 600;">
+                            {{ complaint[10] if complaint[10] else 'N/A' }}
                         </span>
                     </td>
                     <td>

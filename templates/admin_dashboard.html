@@ -195,16 +195,16 @@ window.onload = function() {
 
             <select name="status" style="padding: 10px 15px; border: 2px solid #e5e7eb; border-radius: 8px; font-size: 14px; font-family: inherit;">
                 <option value="">All Status</option>
-                <option value="Pending"     {% if status == 'Pending' %}selected{% endif %}>⏳ Pending</option>
+                <option value="Pending" {% if status == 'Pending' %}selected{% endif %}>⏳ Pending</option>
                 <option value="In Progress" {% if status == 'In Progress' %}selected{% endif %}>🔄 In Progress</option>
-                <option value="Resolved"    {% if status == 'Resolved' %}selected{% endif %}>✅ Resolved</option>
+                <option value="Resolved" {% if status == 'Resolved' %}selected{% endif %}>✅ Resolved</option>
             </select>
 
             <select name="priority" style="padding: 10px 15px; border: 2px solid #e5e7eb; border-radius: 8px; font-size: 14px; font-family: inherit;">
                 <option value="">All Priority</option>
-                <option value="High"   {% if priority == 'High' %}selected{% endif %}>🔴 High</option>
+                <option value="High" {% if priority == 'High' %}selected{% endif %}>🔴 High</option>
                 <option value="Medium" {% if priority == 'Medium' %}selected{% endif %}>🟡 Medium</option>
-                <option value="Low"    {% if priority == 'Low' %}selected{% endif %}>🟢 Low</option>
+                <option value="Low" {% if priority == 'Low' %}selected{% endif %}>🟢 Low</option>
             </select>
 
             <button type="submit" class="btn btn-primary" style="padding: 10px 20px; font-size: 14px;">
@@ -233,6 +233,7 @@ window.onload = function() {
                     <th>Citizen</th>
                     <th>Title</th>
                     <th>Category</th>
+                    <th>Area</th>
                     <th>Priority</th>
                     <th>Date</th>
                     <th>Status</th>
@@ -243,34 +244,37 @@ window.onload = function() {
             <tbody>
                 {% for complaint in complaints %}
                 <tr>
-                    <!-- ✅ Reference Number -->
+
                     <td>
                         <span style="background: #f0f4f8; color: #1a3c6e; padding: 4px 10px; border-radius: 6px; font-size: 12px; font-weight: 700;">
                             {{ complaint[9] if complaint[9] else 'N/A' }}
                         </span>
                     </td>
 
-                    <!-- ✅ Citizen - now complaint[10] -->
                     <td>
                         <div style="display: flex; align-items: center; gap: 8px;">
                             <div style="width: 32px; height: 32px; background: linear-gradient(135deg, #1a3c6e, #2563ab); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-size: 13px; font-weight: 700;">
-                                {{ complaint[10][0].upper() }}
+                                {{ complaint[11][0].upper() }}
                             </div>
-                            <span style="font-weight: 500; font-size: 13px;">{{ complaint[10] }}</span>
+                            <span style="font-weight: 500; font-size: 13px;">{{ complaint[11] }}</span>
                         </div>
                     </td>
 
-                    <!-- Title -->
                     <td style="font-weight: 500; max-width: 180px;">{{ complaint[2] }}</td>
 
-                    <!-- Category -->
                     <td>
                         <span style="background: #eff6ff; color: #1d4ed8; padding: 4px 10px; border-radius: 6px; font-size: 12px; font-weight: 600;">
                             {{ complaint[4] }}
                         </span>
                     </td>
 
-                    <!-- Priority -->
+                    <!-- ✅ AREA COLUMN -->
+                    <td>
+                        <span style="background: #f3f4f6; color: #374151; padding: 4px 10px; border-radius: 6px; font-size: 12px; font-weight: 600;">
+                            {{ complaint[10] if complaint[10] else 'N/A' }}
+                        </span>
+                    </td>
+
                     <td>
                         {% if complaint[6] == 'High' %}
                             <span class="badge badge-high">🔴 High</span>
@@ -281,10 +285,8 @@ window.onload = function() {
                         {% endif %}
                     </td>
 
-                    <!-- Date -->
                     <td style="color: #888; font-size: 13px;">{{ complaint[7] }}</td>
 
-                    <!-- Status -->
                     <td>
                         {% if complaint[5] == 'Pending' %}
                             <span class="badge badge-pending">⏳ Pending</span>
@@ -295,7 +297,6 @@ window.onload = function() {
                         {% endif %}
                     </td>
 
-                    <!-- History Button -->
                     <td>
                         <a href="/timeline/{{ complaint[0] }}"
                            style="background: #eff6ff; color: #1d4ed8; padding: 5px 12px; border-radius: 6px; font-size: 12px; font-weight: 600; text-decoration: none;">
@@ -303,7 +304,6 @@ window.onload = function() {
                         </a>
                     </td>
 
-                    <!-- Action Dropdown -->
                     <td>
                         <form method="POST" action="/update-status">
                             <input type="hidden" name="complaint_id" value="{{ complaint[0] }}">
@@ -311,9 +311,9 @@ window.onload = function() {
                                 name="status"
                                 onchange="this.form.submit()"
                                 style="padding: 7px 10px; border-radius: 7px; border: 2px solid #e5e7eb; font-size: 13px; font-family: inherit; cursor: pointer; background: white; color: #333; font-weight: 500;">
-                                <option value="Pending"     {% if complaint[5] == 'Pending' %}selected{% endif %}>⏳ Pending</option>
+                                <option value="Pending" {% if complaint[5] == 'Pending' %}selected{% endif %}>⏳ Pending</option>
                                 <option value="In Progress" {% if complaint[5] == 'In Progress' %}selected{% endif %}>🔄 In Progress</option>
-                                <option value="Resolved"    {% if complaint[5] == 'Resolved' %}selected{% endif %}>✅ Resolved</option>
+                                <option value="Resolved" {% if complaint[5] == 'Resolved' %}selected{% endif %}>✅ Resolved</option>
                             </select>
                         </form>
                     </td>
@@ -337,38 +337,6 @@ window.onload = function() {
             {% endif %}
         </p>
     </div>
-    {% endif %}
-
-    <!-- ====== PAGINATION ====== -->
-    {% if total_pages > 1 %}
-    <div style="display: flex; justify-content: center; align-items: center; gap: 8px; margin-top: 25px; flex-wrap: wrap;">
-
-        {% if page > 1 %}
-        <a href="/admin?page={{ page - 1 }}&search={{ search }}&status={{ status }}&priority={{ priority }}"
-           style="padding: 8px 16px; border-radius: 8px; background: #1a3c6e; color: white; text-decoration: none; font-size: 14px; font-weight: 600;">
-            ← Prev
-        </a>
-        {% endif %}
-
-        {% for p in range(1, total_pages + 1) %}
-        <a href="/admin?page={{ p }}&search={{ search }}&status={{ status }}&priority={{ priority }}"
-           style="padding: 8px 14px; border-radius: 8px; text-decoration: none; font-size: 14px; font-weight: 600;
-                  {% if p == page %}background: #2563ab; color: white;{% else %}background: #f0f4f8; color: #1a3c6e;{% endif %}">
-            {{ p }}
-        </a>
-        {% endfor %}
-
-        {% if page < total_pages %}
-        <a href="/admin?page={{ page + 1 }}&search={{ search }}&status={{ status }}&priority={{ priority }}"
-           style="padding: 8px 16px; border-radius: 8px; background: #1a3c6e; color: white; text-decoration: none; font-size: 14px; font-weight: 600;">
-            Next →
-        </a>
-        {% endif %}
-
-    </div>
-    <p style="text-align: center; color: #888; font-size: 13px; margin-top: 10px;">
-        Page {{ page }} of {{ total_pages }}
-    </p>
     {% endif %}
 
 </div>
