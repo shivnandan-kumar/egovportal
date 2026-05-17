@@ -32,14 +32,18 @@ import psycopg2
 import os
 
 def get_db_connection():
-    # Ye line Render se URL apne aap uthayegi
     db_url = os.environ.get('DATABASE_URL')
     
-    # Agar Render par URL nahi mila (matlab aap laptop par chala rahe ho)
-    if not db_url:
-        db_url = "postgres://egov_portal_qczh_user:apka_password@hostname/egov_portal_qczh"
+    if db_url:
+        # Render fix: postgres:// ko postgresql:// mein badalna padta hai
+        if db_url.startswith("postgres://"):
+            db_url = db_url.replace("postgres://", "postgresql://", 1)
+        conn = psycopg2.connect(db_url, sslmode='require')
+    else:
+        # Local laptop ke liye purana link
+        fallback_url = "postgresql://egov_portal_qczh_user:apka_password@hostname/egov_portal_qczh"
+        conn = psycopg2.connect(fallback_url, sslmode='require')
         
-    conn = psycopg2.connect(db_url, sslmode='require')
     return conn
 
 def init_db():
