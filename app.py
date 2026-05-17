@@ -109,10 +109,10 @@ def init_db():
     # Create a default ADMIN account with hashed password
     admin_password = generate_password_hash('admin123')
     cursor.execute('''
-        INSERT OR IGNORE INTO users (username, email, password, role, is_active)
+        INSERT INTO users (username, email, password, role, is_active)
         VALUES ('admin', 'admin@egov.com', %s, 'admin', 1)
+        ON CONFLICT (email) DO NOTHING
     ''', (admin_password,))
-
     conn.commit()  # Save changes
     conn.close()   # Close connection
     print("✅ Database initialized successfully!")
