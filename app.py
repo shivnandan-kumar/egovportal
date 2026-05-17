@@ -61,8 +61,7 @@ def init_db():
         )
     ''')
     # ... saari CREATE TABLE queries ke baad ...
-    conn.commit()  # Ye save karega
-    conn.close()   # Ye connection band karega
+    # Ye connection band karega
 
     # ✅ FIXED: Create COMPLAINTS table with filename and ref_number
     cursor.execute('''
@@ -335,7 +334,7 @@ def submit_complaint():
         cursor_ref = conn_ref.cursor()
         cursor_ref.execute('SELECT COUNT(*) FROM complaints')
         count      = cursor_ref.fetchone()[0] + 1
-        conn_ref.close()
+        #conn_ref.close()
         ref_number = f"CMP-{datetime.now().strftime('%Y')}-{count:04d}"
 
         # Handle file upload
