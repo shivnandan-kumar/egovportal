@@ -32,8 +32,13 @@ import psycopg2
 import os
 
 def get_db_connection():
-    # Render se jo External URL copy kiya tha, use yahan paste karein
-    db_url = "postgres://egov_portal_qczh_user:apka_password@hostname/egov_portal_qczh"
+    # Ye line Render se URL apne aap uthayegi
+    db_url = os.environ.get('DATABASE_URL')
+    
+    # Agar Render par URL nahi mila (matlab aap laptop par chala rahe ho)
+    if not db_url:
+        db_url = "postgres://egov_portal_qczh_user:apka_password@hostname/egov_portal_qczh"
+        
     conn = psycopg2.connect(db_url, sslmode='require')
     return conn
 
@@ -108,7 +113,7 @@ def init_db():
 # ... saari CREATE TABLE queries ke baad ...
     conn.commit()  # Ye save karega
     conn.close()   # Ye connection band karega
-    
+
     # Create a default ADMIN account with hashed password
     admin_password = generate_password_hash('admin123')
     cursor.execute('''
