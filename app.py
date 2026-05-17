@@ -186,7 +186,7 @@ def login():
         conn   = get_db_connection()
         cursor = conn.cursor()
 
-        cursor.execute('SELECT * FROM users WHERE email = ?', (email,))
+        cursor.execute('SELECT * FROM users WHERE email = %s', (email,))
         user = cursor.fetchone()
         conn.close()
 
@@ -244,7 +244,7 @@ def user_dashboard():
     page     = int(request.args.get('page', 1))
     per_page = 5
 
-    query  = 'SELECT * FROM complaints WHERE user_id = ?'
+    query  = 'SELECT * FROM complaints WHERE user_id = %s'
     params = [session['user_id']]
 
     if search:
