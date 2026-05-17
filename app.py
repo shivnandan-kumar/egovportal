@@ -151,24 +151,23 @@ def register():
             return redirect(url_for('register'))
 
         try:
-            conn   = get_db_connection()
+            conn = get_db_connection()
             cursor = conn.cursor()
-
             hashed_password = generate_password_hash(password)
 
             cursor.execute('''
                 INSERT INTO users (username, email, password, role, is_active)
-                VALUES (?, ?, ?, 'user', 1)
+                VALUES (%s, %s, %s, 'user', 1)
             ''', (username, email, hashed_password))
 
             conn.commit()
             conn.close()
 
-            flash('✅ Registration successful! Please login.', 'success')
+            flash('✅ Registration successful!', 'success')
             return redirect(url_for('login'))
 
-        except sqlite3.IntegrityError:
-            flash('❌ Email already registered. Try a different one.', 'danger')
+        except Exception as e:
+            flash(f'❌ Error: {str(e)}', 'danger')
             return redirect(url_for('register'))
 
     return render_template('register.html')
