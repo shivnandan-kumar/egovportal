@@ -40,17 +40,10 @@ def get_db_connection():
 def init_db():
     conn = get_db_connection()
     cursor = conn.cursor()
-    # ... baki table banane wala code niche ...
-def init_db():
-    """This function creates the database and tables if they don't exist"""
-
-    conn   = sqlite3.connect('database.db')
-    cursor = conn.cursor()
-
     # Create USERS table
     cursor.execute('''
         CREATE TABLE IF NOT EXISTS users (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            id SERIAL PRIMARY KEY,
             username TEXT NOT NULL,
             email TEXT UNIQUE NOT NULL,
             password TEXT NOT NULL,
@@ -58,11 +51,14 @@ def init_db():
             is_active INTEGER DEFAULT 1
         )
     ''')
+    # ... saari CREATE TABLE queries ke baad ...
+    conn.commit()  # Ye save karega
+    conn.close()   # Ye connection band karega
 
     # ✅ FIXED: Create COMPLAINTS table with filename and ref_number
     cursor.execute('''
         CREATE TABLE IF NOT EXISTS complaints (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            id SERIAL PRIMARY KEY,
             user_id INTEGER NOT NULL,
             title TEXT NOT NULL,
             description TEXT NOT NULL,
@@ -76,11 +72,14 @@ def init_db():
             FOREIGN KEY (user_id) REFERENCES users(id)
         )
     ''')
+    # ... saari CREATE TABLE queries ke baad ...
+    conn.commit()  # Ye save karega
+    conn.close()   # Ye connection band karega
 
     # Create STATUS TIMELINE table
     cursor.execute('''
         CREATE TABLE IF NOT EXISTS timeline (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            id SERIAL PRIMARY KEY,
             complaint_id INTEGER NOT NULL,
             status TEXT NOT NULL,
             comment TEXT,
@@ -89,11 +88,14 @@ def init_db():
             FOREIGN KEY (complaint_id) REFERENCES complaints(id)
         )
     ''')
+    # ... saari CREATE TABLE queries ke baad ...
+    conn.commit()  # Ye save karega
+    conn.close()   # Ye connection band karega
 
     # Create FEEDBACK table
     cursor.execute('''
         CREATE TABLE IF NOT EXISTS feedback (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            id SERIAL PRIMARY KEY,
             complaint_id INTEGER NOT NULL,
             user_id INTEGER NOT NULL,
             rating INTEGER NOT NULL,
@@ -103,7 +105,10 @@ def init_db():
             FOREIGN KEY (user_id) REFERENCES users(id)
         )
     ''')
-
+# ... saari CREATE TABLE queries ke baad ...
+    conn.commit()  # Ye save karega
+    conn.close()   # Ye connection band karega
+    
     # Create a default ADMIN account with hashed password
     admin_password = generate_password_hash('admin123')
     cursor.execute('''
@@ -149,7 +154,7 @@ def register():
             return redirect(url_for('register'))
 
         try:
-            conn   = sqlite3.connect('database.db')
+            conn   = get_db_connection()
             cursor = conn.cursor()
 
             hashed_password = generate_password_hash(password)
@@ -182,7 +187,7 @@ def login():
         email    = request.form['email']
         password = request.form['password']
 
-        conn   = sqlite3.connect('database.db')
+        conn   = get_db_connection()
         cursor = conn.cursor()
 
         cursor.execute('SELECT * FROM users WHERE email = ?', (email,))
@@ -260,7 +265,7 @@ def user_dashboard():
 
     query += ' ORDER BY id DESC'
 
-    conn   = sqlite3.connect('database.db')
+    conn   = get_db_connection()
     cursor = conn.cursor()
 
     cursor.execute(query, params)
@@ -317,7 +322,7 @@ def submit_complaint():
         date_submitted = datetime.now().strftime('%Y-%m-%d %H:%M')
 
         # Generate unique reference number
-        conn_ref   = sqlite3.connect('database.db')
+        conn_ref   = get_db_connection()
         cursor_ref = conn_ref.cursor()
         cursor_ref.execute('SELECT COUNT(*) FROM complaints')
         count      = cursor_ref.fetchone()[0] + 1
@@ -334,7 +339,7 @@ def submit_complaint():
                 filename = f"{datetime.now().strftime('%Y%m%d%H%M%S')}_{filename}"
                 file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
 
-        conn   = sqlite3.connect('database.db')
+        conn   = get_db_connection()
         cursor = conn.cursor()
 
         cursor.execute('''
@@ -388,7 +393,7 @@ def admin_dashboard():
 
     query += ' ORDER BY complaints.id DESC'
 
-    conn   = sqlite3.connect('database.db')
+    conn   = get_db_connection()
     cursor = conn.cursor()
 
     cursor.execute(query, params)
@@ -459,7 +464,7 @@ def export_csv():
     import io
     from flask import Response
 
-    conn   = sqlite3.connect('database.db')
+    conn   = get_db_connection()
     cursor = conn.cursor()
 
     cursor.execute('''
@@ -510,7 +515,7 @@ def update_status():
     new_status   = request.form['status']
     updated_at   = datetime.now().strftime('%Y-%m-%d %H:%M')
 
-    conn   = sqlite3.connect('database.db')
+    conn   = get_db_connection()
     cursor = conn.cursor()
 
     cursor.execute('UPDATE complaints SET status = ? WHERE id = ?',
@@ -540,7 +545,7 @@ def view_timeline(complaint_id):
         flash('❌ Please login first!', 'danger')
         return redirect(url_for('login'))
 
-    conn   = sqlite3.connect('database.db')
+    conn   = get_db_connection()
     cursor = conn.cursor()
 
     cursor.execute('''
@@ -582,7 +587,7 @@ def manage_users():
         flash('❌ Access denied!', 'danger')
         return redirect(url_for('login'))
 
-    conn   = sqlite3.connect('database.db')
+    conn   = get_db_connection()
     cursor = conn.cursor()
 
     cursor.execute('''
@@ -621,7 +626,7 @@ def toggle_user(user_id):
         flash('❌ You cannot block yourself!', 'danger')
         return redirect(url_for('manage_users'))
 
-    conn   = sqlite3.connect('database.db')
+    conn   = get_db_connection()
     cursor = conn.cursor()
 
     cursor.execute('SELECT is_active, username FROM users WHERE id = ?', (user_id,))
@@ -653,7 +658,7 @@ def toggle_role(user_id):
         flash('❌ You cannot change your own role!', 'danger')
         return redirect(url_for('manage_users'))
 
-    conn   = sqlite3.connect('database.db')
+    conn   = get_db_connection()
     cursor = conn.cursor()
 
     cursor.execute('SELECT role, username FROM users WHERE id = ?', (user_id,))
@@ -681,7 +686,7 @@ def submit_feedback(complaint_id):
         flash('❌ Please login first!', 'danger')
         return redirect(url_for('login'))
 
-    conn   = sqlite3.connect('database.db')
+    conn   = get_db_connection()
     cursor = conn.cursor()
 
     cursor.execute('SELECT * FROM complaints WHERE id = ? AND user_id = ?',
@@ -738,7 +743,7 @@ def view_feedback():
         flash('❌ Access denied!', 'danger')
         return redirect(url_for('login'))
 
-    conn   = sqlite3.connect('database.db')
+    conn   = get_db_connection()
     cursor = conn.cursor()
 
     cursor.execute('''
@@ -772,7 +777,7 @@ def profile():
         flash('❌ Please login first!', 'danger')
         return redirect(url_for('login'))
 
-    conn   = sqlite3.connect('database.db')
+    conn   = get_db_connection()
     cursor = conn.cursor()
 
     if request.method == 'POST':
