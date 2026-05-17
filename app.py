@@ -60,9 +60,7 @@ def init_db():
             is_active INTEGER DEFAULT 1
         )
     ''')
-    # ... saari CREATE TABLE queries ke baad ...
-    # Ye connection band karega
-
+    
     # ✅ FIXED: Create COMPLAINTS table with filename and ref_number
     cursor.execute('''
         CREATE TABLE IF NOT EXISTS complaints (
@@ -80,10 +78,7 @@ def init_db():
             FOREIGN KEY (user_id) REFERENCES users(id)
         )
     ''')
-    # ... saari CREATE TABLE queries ke baad ...
-    conn.commit()  # Ye save karega
-    conn.close()   # Ye connection band karega
-
+    
     # Create STATUS TIMELINE table
     cursor.execute('''
         CREATE TABLE IF NOT EXISTS timeline (
@@ -96,10 +91,7 @@ def init_db():
             FOREIGN KEY (complaint_id) REFERENCES complaints(id)
         )
     ''')
-    # ... saari CREATE TABLE queries ke baad ...
-    conn.commit()  # Ye save karega
-    conn.close()   # Ye connection band karega
-
+   
     # Create FEEDBACK table
     cursor.execute('''
         CREATE TABLE IF NOT EXISTS feedback (
@@ -113,15 +105,12 @@ def init_db():
             FOREIGN KEY (user_id) REFERENCES users(id)
         )
     ''')
-# ... saari CREATE TABLE queries ke baad ...
-    conn.commit()  # Ye save karega
-    conn.close()   # Ye connection band karega
 
     # Create a default ADMIN account with hashed password
     admin_password = generate_password_hash('admin123')
     cursor.execute('''
         INSERT OR IGNORE INTO users (username, email, password, role, is_active)
-        VALUES ('admin', 'admin@egov.com', ?, 'admin', 1)
+        VALUES ('admin', 'admin@egov.com', %s, 'admin', 1)
     ''', (admin_password,))
 
     conn.commit()  # Save changes
