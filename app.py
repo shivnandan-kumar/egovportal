@@ -244,19 +244,19 @@ def user_dashboard():
     page     = int(request.args.get('page', 1))
     per_page = 5
 
-    query  = 'SELECT * FROM complaints WHERE user_id = %s'
+    query = 'SELECT * FROM complaints WHERE user_id = %s'
     params = [session['user_id']]
 
     if search:
-        query += ' AND (title LIKE ? OR category LIKE ?)'
+        query += ' AND (title LIKE %s OR category LIKE %s)'
         params.extend([f'%{search}%', f'%{search}%'])
 
     if status:
-        query += ' AND status = ?'
+        query += ' AND status = %s'
         params.append(status)
 
     if priority:
-        query += ' AND priority = ?'
+        query += ' AND priority = %s'
         params.append(priority)
 
     query += ' ORDER BY id DESC'
@@ -273,7 +273,7 @@ def user_dashboard():
     cursor.execute(query, params)
     complaints = cursor.fetchall()
 
-    cursor.execute('SELECT complaint_id FROM feedback WHERE user_id = ?',
+    cursor.execute('SELECT complaint_id FROM feedback WHERE user_id = %s',
                    (session['user_id'],))
     feedback_given = [row[0] for row in cursor.fetchall()]
 
@@ -341,7 +341,7 @@ def submit_complaint():
         cursor.execute('''
             INSERT INTO complaints
             (user_id, title, description, category, status, priority, date_submitted, filename, ref_number, area)
-            VALUES (?, ?, ?, ?, 'Pending', ?, ?, ?, ?, ?)
+            VALUES (%s, %s, %s, %s, 'Pending', %s, %s, %s, %s, %s)
         ''', (session['user_id'], title, description,
               category, priority, date_submitted, filename, ref_number, area))
 
@@ -376,15 +376,15 @@ def admin_dashboard():
     params = []
 
     if search:
-        query += ' AND (complaints.title LIKE ? OR complaints.category LIKE ? OR users.username LIKE ?)'
+        query += ' AND (complaints.title LIKE %s OR complaints.category LIKE %s OR users.username LIKE %s)'
         params.extend([f'%{search}%', f'%{search}%', f'%{search}%'])
 
     if status:
-        query += ' AND complaints.status = ?'
+        query += ' AND complaints.status = %s'
         params.append(status)
 
     if priority:
-        query += ' AND complaints.priority = ?'
+        query += ' AND complaints.priority = %s'
         params.append(priority)
 
     query += ' ORDER BY complaints.id DESC'
@@ -514,12 +514,12 @@ def update_status():
     conn   = get_db_connection()
     cursor = conn.cursor()
 
-    cursor.execute('UPDATE complaints SET status = ? WHERE id = ?',
+    cursor.execute('UPDATE complaints SET status = %s WHERE id = %s',
                    (new_status, complaint_id))
 
     cursor.execute('''
         INSERT INTO timeline (complaint_id, status, comment, updated_by, updated_at)
-        VALUES (?, ?, ?, ?, ?)
+        VALUES (%s, %s, %s, %s, %s)
     ''', (complaint_id, new_status,
           f'Status updated to {new_status}',
           session['username'],
@@ -548,13 +548,13 @@ def view_timeline(complaint_id):
         SELECT complaints.*, users.username
         FROM complaints
         JOIN users ON complaints.user_id = users.id
-        WHERE complaints.id = ?
+        WHERE complaints.id = %s
     ''', (complaint_id,))
     complaint = cursor.fetchone()
 
     cursor.execute('''
         SELECT * FROM timeline
-        WHERE complaint_id = ?
+        WHERE complaint_id = %s
         ORDER BY id ASC
     ''', (complaint_id,))
     timeline = cursor.fetchall()
@@ -625,12 +625,12 @@ def toggle_user(user_id):
     conn   = get_db_connection()
     cursor = conn.cursor()
 
-    cursor.execute('SELECT is_active, username FROM users WHERE id = ?', (user_id,))
+    cursor.execute('SELECT is_active, username FROM users WHERE id = %s', (user_id,))
     user = cursor.fetchone()
 
     if user:
         new_status  = 0 if user[0] == 1 else 1
-        cursor.execute('UPDATE users SET is_active = ? WHERE id = ?',
+        cursor.execute('UPDATE users SET is_active = %s WHERE id = %s',
                        (new_status, user_id))
         conn.commit()
 
@@ -657,12 +657,12 @@ def toggle_role(user_id):
     conn   = get_db_connection()
     cursor = conn.cursor()
 
-    cursor.execute('SELECT role, username FROM users WHERE id = ?', (user_id,))
+    cursor.execute('SELECT role, username FROM users WHERE id = %s', (user_id,))
     user = cursor.fetchone()
 
     if user:
         new_role = 'user' if user[0] == 'admin' else 'admin'
-        cursor.execute('UPDATE users SET role = ? WHERE id = ?',
+        cursor.execute('UPDATE users SET role = %s WHERE id = %s',
                        (new_role, user_id))
         conn.commit()
 
@@ -685,7 +685,7 @@ def submit_feedback(complaint_id):
     conn   = get_db_connection()
     cursor = conn.cursor()
 
-    cursor.execute('SELECT * FROM complaints WHERE id = ? AND user_id = ?',
+    cursor.execute('SELECT * FROM complaints WHERE id = %s AND user_id = %s',
                    (complaint_id, session['user_id']))
     complaint = cursor.fetchone()
 
@@ -699,7 +699,7 @@ def submit_feedback(complaint_id):
         conn.close()
         return redirect(url_for('user_dashboard'))
 
-    cursor.execute('SELECT * FROM feedback WHERE complaint_id = ? AND user_id = ?',
+    cursor.execute('SELECT * FROM feedback WHERE complaint_id = %s AND user_id = %s',
                    (complaint_id, session['user_id']))
     existing_feedback = cursor.fetchone()
 
@@ -717,7 +717,7 @@ def submit_feedback(complaint_id):
 
         cursor.execute('''
             INSERT INTO feedback (complaint_id, user_id, rating, comment, submitted_at)
-            VALUES (?, ?, ?, ?, ?)
+            VALUES (%s, %s, %s, %s, %s)
         ''', (complaint_id, session['user_id'], rating, comment, submitted_at))
 
         conn.commit()
@@ -781,7 +781,7 @@ def profile():
 
         if action == 'update_username':
             new_username = request.form['username']
-            cursor.execute('UPDATE users SET username = ? WHERE id = ?',
+            cursor.execute('UPDATE users SET username = %s WHERE id = %s',
                            (new_username, session['user_id']))
             conn.commit()
             session['username'] = new_username
@@ -792,7 +792,7 @@ def profile():
             new_password     = request.form['new_password']
             confirm_password = request.form['confirm_password']
 
-            cursor.execute('SELECT password FROM users WHERE id = ?',
+            cursor.execute('SELECT password FROM users WHERE id = %s',
                            (session['user_id'],))
             user = cursor.fetchone()
 
@@ -804,7 +804,7 @@ def profile():
                 flash('❌ Password must be at least 6 characters!', 'danger')
             else:
                 hashed = generate_password_hash(new_password)
-                cursor.execute('UPDATE users SET password = ? WHERE id = ?',
+                cursor.execute('UPDATE users SET password = %s WHERE id = %s',
                                (hashed, session['user_id']))
                 conn.commit()
                 flash('✅ Password changed successfully!', 'success')
@@ -817,20 +817,20 @@ def profile():
                COUNT(complaints.id) as total_complaints
         FROM users
         LEFT JOIN complaints ON users.id = complaints.user_id
-        WHERE users.id = ?
+        WHERE users.id = %s
         GROUP BY users.id
     ''', (session['user_id'],))
     user = cursor.fetchone()
 
-    cursor.execute('SELECT COUNT(*) FROM complaints WHERE user_id = ? AND status = ?',
+    cursor.execute('SELECT COUNT(*) FROM complaints WHERE user_id = %s AND status = %s',
                    (session['user_id'], 'Pending'))
     pending = cursor.fetchone()[0]
 
-    cursor.execute('SELECT COUNT(*) FROM complaints WHERE user_id = ? AND status = ?',
+    cursor.execute('SELECT COUNT(*) FROM complaints WHERE user_id = %s AND status = %s',
                    (session['user_id'], 'Resolved'))
     resolved = cursor.fetchone()[0]
 
-    cursor.execute('SELECT COUNT(*) FROM feedback WHERE user_id = ?',
+    cursor.execute('SELECT COUNT(*) FROM feedback WHERE user_id = %s',
                    (session['user_id'],))
     feedbacks = cursor.fetchone()[0]
 
