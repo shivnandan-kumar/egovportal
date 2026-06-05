@@ -35,14 +35,16 @@ def get_db_connection():
     db_url = os.environ.get('DATABASE_URL')
     
     if db_url:
-        # Render fix: postgres:// ko postgresql:// mein badalna padta hai
+        # Render/Python fix: string ko postgresql:// mein badalna zaroori hai
         if db_url.startswith("postgres://"):
             db_url = db_url.replace("postgres://", "postgresql://", 1)
-        conn = psycopg2.connect(db_url, sslmode='require')
+        
+        # Supabase Connection Pooler compatibility bypass ke sath connect karein
+        conn = psycopg2.connect(db_url)
     else:
-        # Local laptop ke liye purana link
+        # Local laptop ke liye purana fallback link
         fallback_url = "postgresql://egov_portal_qczh_user:apka_password@hostname/egov_portal_qczh"
-        conn = psycopg2.connect(fallback_url, sslmode='require')
+        conn = psycopg2.connect(fallback_url)
         
     return conn
 
