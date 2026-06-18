@@ -5,7 +5,7 @@
 {% block content %}
 
 <!-- ====== HERO SECTION ====== -->
-<div style="background: linear-gradient(135deg, #1a3c6e 0%, #2563ab 50%, #3b82f6 100%); border-radius: 16px; padding: 80px 40px; text-align: center; margin-bottom: 40px; position: relative; overflow: hidden; box-shadow: 0 10px 40px rgba(26,60,110,0.3);">
+<div class="home-hero" style="background: linear-gradient(135deg, #1a3c6e 0%, #2563ab 50%, #3b82f6 100%); border-radius: 16px; padding: 80px 40px; text-align: center; margin-bottom: 40px; position: relative; overflow: hidden; box-shadow: 0 10px 40px rgba(26,60,110,0.3);">
 
     <!-- Background circles for design -->
     <div style="position: absolute; top: -50px; left: -50px; width: 200px; height: 200px; background: rgba(255,255,255,0.05); border-radius: 50%;"></div>
@@ -14,38 +14,38 @@
 
     <!-- Content -->
     <div style="position: relative; z-index: 1;">
-        <div style="display: inline-block; background: rgba(255,255,255,0.15); padding: 10px 20px; border-radius: 30px; margin-bottom: 25px;">
+        <div class="home-hero-badge" style="display: inline-block; background: rgba(255,255,255,0.15); padding: 10px 20px; border-radius: 30px; margin-bottom: 25px;">
             <span style="color: rgba(255,255,255,0.9); font-size: 13px; font-weight: 600; letter-spacing: 1px;">🇮🇳 DIGITAL INDIA INITIATIVE</span>
         </div>
 
-        <h1 style="font-size: 46px; color: white; margin-bottom: 18px; font-weight: 800; line-height: 1.2; text-shadow: 0 2px 10px rgba(0,0,0,0.2);">
+        <h1 class="home-hero-title" style="font-size: 46px; color: white; margin-bottom: 18px; font-weight: 800; line-height: 1.2; text-shadow: 0 2px 10px rgba(0,0,0,0.2);">
             🏛️ E-Governance<br>Complaint Portal
         </h1>
 
-        <p style="font-size: 18px; color: rgba(255,255,255,0.85); margin-bottom: 35px; max-width: 550px; margin-left: auto; margin-right: auto; line-height: 1.6;">
+        <p class="home-hero-text" style="font-size: 18px; color: rgba(255,255,255,0.85); margin-bottom: 35px; max-width: 550px; margin-left: auto; margin-right: auto; line-height: 1.6;">
             Submit complaints, request government services, and track their resolution — all from the comfort of your home.
         </p>
 
         <!-- ====== HERO BUTTONS (role-aware) ====== -->
-        <div style="display: flex; gap: 15px; justify-content: center; flex-wrap: wrap;">
+        <div class="home-hero-actions" style="display: flex; gap: 15px; justify-content: center; flex-wrap: wrap;">
             {% if session.user_id %}
                 {% if session.role == 'admin' %}
-                    <a href="/admin" style="background: white; color: #1a3c6e; padding: 14px 32px; border-radius: 8px; text-decoration: none; font-weight: 700; font-size: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.2);">
+                    <a href="/admin" class="home-hero-btn" style="background: white; color: #1a3c6e; padding: 14px 32px; border-radius: 8px; text-decoration: none; font-weight: 700; font-size: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.2);">
                         🛡️ Go to Admin Panel
                     </a>
                 {% else %}
-                    <a href="/dashboard" style="background: white; color: #1a3c6e; padding: 14px 32px; border-radius: 8px; text-decoration: none; font-weight: 700; font-size: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.2);">
+                    <a href="/dashboard" class="home-hero-btn" style="background: white; color: #1a3c6e; padding: 14px 32px; border-radius: 8px; text-decoration: none; font-weight: 700; font-size: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.2);">
                         📋 Go to My Dashboard
                     </a>
-                    <a href="/submit-complaint" style="background: rgba(255,255,255,0.15); color: white; padding: 14px 32px; border-radius: 8px; text-decoration: none; font-weight: 700; font-size: 15px; border: 2px solid rgba(255,255,255,0.4);">
+                    <a href="/submit-complaint" class="home-hero-btn" style="background: rgba(255,255,255,0.15); color: white; padding: 14px 32px; border-radius: 8px; text-decoration: none; font-weight: 700; font-size: 15px; border: 2px solid rgba(255,255,255,0.4);">
                         📝 Submit Complaint
                     </a>
                 {% endif %}
             {% else %}
-                <a href="/register" style="background: white; color: #1a3c6e; padding: 14px 32px; border-radius: 8px; text-decoration: none; font-weight: 700; font-size: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.2);">
+                <a href="/register" class="home-hero-btn" style="background: white; color: #1a3c6e; padding: 14px 32px; border-radius: 8px; text-decoration: none; font-weight: 700; font-size: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.2);">
                     📝 Register as Citizen
                 </a>
-                <a href="/login" style="background: rgba(255,255,255,0.15); color: white; padding: 14px 32px; border-radius: 8px; text-decoration: none; font-weight: 700; font-size: 15px; border: 2px solid rgba(255,255,255,0.4);">
+                <a href="/login" class="home-hero-btn" style="background: rgba(255,255,255,0.15); color: white; padding: 14px 32px; border-radius: 8px; text-decoration: none; font-weight: 700; font-size: 15px; border: 2px solid rgba(255,255,255,0.4);">
                     🔐 Login to Portal
                 </a>
             {% endif %}
@@ -55,7 +55,7 @@
 </div>
 
 <!-- ====== STATS BAR ====== -->
-<div style="background: white; border-radius: 12px; padding: 25px 40px; margin-bottom: 40px; box-shadow: 0 2px 15px rgba(0,0,0,0.08); display: flex; justify-content: space-around; flex-wrap: wrap; gap: 20px;">
+<div class="home-stats" style="background: white; border-radius: 12px; padding: 25px 40px; margin-bottom: 40px; box-shadow: 0 2px 15px rgba(0,0,0,0.08); display: flex; justify-content: space-around; flex-wrap: wrap; gap: 20px;">
 
     <div style="text-align: center;">
         <div style="font-size: 28px; font-weight: 800; color: #1a3c6e;">500+</div>
@@ -86,15 +86,15 @@
 </div>
 
 <!-- ====== HOW IT WORKS ====== -->
-<div style="text-align: center; margin-bottom: 15px;">
+<div class="home-section-heading" style="text-align: center; margin-bottom: 15px;">
     <h2 style="font-size: 28px; color: #1a3c6e; font-weight: 800;">How It Works</h2>
     <p style="color: #888; margin-top: 8px;">Simple 3-step process to get your complaint resolved</p>
 </div>
 
-<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px; margin-bottom: 40px;">
+<div class="home-steps-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px; margin-bottom: 40px;">
 
     <!-- Step 1 -->
-    <div style="background: white; border-radius: 12px; padding: 30px; box-shadow: 0 2px 15px rgba(0,0,0,0.08); text-align: center; border-top: 4px solid #1a3c6e;">
+    <div class="home-step-card" style="background: white; border-radius: 12px; padding: 30px; box-shadow: 0 2px 15px rgba(0,0,0,0.08); text-align: center; border-top: 4px solid #1a3c6e;">
         <div style="width: 60px; height: 60px; background: linear-gradient(135deg, #1a3c6e, #2563ab); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 20px; font-size: 24px;">
             📝
         </div>
@@ -104,7 +104,7 @@
     </div>
 
     <!-- Step 2 -->
-    <div style="background: white; border-radius: 12px; padding: 30px; box-shadow: 0 2px 15px rgba(0,0,0,0.08); text-align: center; border-top: 4px solid #2563ab;">
+    <div class="home-step-card" style="background: white; border-radius: 12px; padding: 30px; box-shadow: 0 2px 15px rgba(0,0,0,0.08); text-align: center; border-top: 4px solid #2563ab;">
         <div style="width: 60px; height: 60px; background: linear-gradient(135deg, #2563ab, #3b82f6); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 20px; font-size: 24px;">
             📤
         </div>
@@ -114,7 +114,7 @@
     </div>
 
     <!-- Step 3 -->
-    <div style="background: white; border-radius: 12px; padding: 30px; box-shadow: 0 2px 15px rgba(0,0,0,0.08); text-align: center; border-top: 4px solid #3b82f6;">
+    <div class="home-step-card" style="background: white; border-radius: 12px; padding: 30px; box-shadow: 0 2px 15px rgba(0,0,0,0.08); text-align: center; border-top: 4px solid #3b82f6;">
         <div style="width: 60px; height: 60px; background: linear-gradient(135deg, #16a34a, #22c55e); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 20px; font-size: 24px;">
             ✅
         </div>
@@ -126,14 +126,14 @@
 </div>
 
 <!-- ====== FEATURES SECTION ====== -->
-<div style="text-align: center; margin-bottom: 15px;">
+<div class="home-section-heading" style="text-align: center; margin-bottom: 15px;">
     <h2 style="font-size: 28px; color: #1a3c6e; font-weight: 800;">Key Features</h2>
     <p style="color: #888; margin-top: 8px;">Everything you need in one place</p>
 </div>
 
-<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 20px; margin-bottom: 40px;">
+<div class="home-feature-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 20px; margin-bottom: 40px;">
 
-    <div style="background: white; border-radius: 12px; padding: 25px; box-shadow: 0 2px 15px rgba(0,0,0,0.08); display: flex; align-items: flex-start; gap: 15px;">
+    <div class="home-feature-card" style="background: white; border-radius: 12px; padding: 25px; box-shadow: 0 2px 15px rgba(0,0,0,0.08); display: flex; align-items: flex-start; gap: 15px;">
         <div style="font-size: 28px; min-width: 40px;">🔐</div>
         <div>
             <h4 style="color: #1a3c6e; margin-bottom: 6px;">Secure Login</h4>
@@ -141,7 +141,7 @@
         </div>
     </div>
 
-    <div style="background: white; border-radius: 12px; padding: 25px; box-shadow: 0 2px 15px rgba(0,0,0,0.08); display: flex; align-items: flex-start; gap: 15px;">
+    <div class="home-feature-card" style="background: white; border-radius: 12px; padding: 25px; box-shadow: 0 2px 15px rgba(0,0,0,0.08); display: flex; align-items: flex-start; gap: 15px;">
         <div style="font-size: 28px; min-width: 40px;">🚨</div>
         <div>
             <h4 style="color: #1a3c6e; margin-bottom: 6px;">Priority System</h4>
@@ -149,7 +149,7 @@
         </div>
     </div>
 
-    <div style="background: white; border-radius: 12px; padding: 25px; box-shadow: 0 2px 15px rgba(0,0,0,0.08); display: flex; align-items: flex-start; gap: 15px;">
+    <div class="home-feature-card" style="background: white; border-radius: 12px; padding: 25px; box-shadow: 0 2px 15px rgba(0,0,0,0.08); display: flex; align-items: flex-start; gap: 15px;">
         <div style="font-size: 28px; min-width: 40px;">📊</div>
         <div>
             <h4 style="color: #1a3c6e; margin-bottom: 6px;">Live Tracking</h4>
@@ -157,7 +157,7 @@
         </div>
     </div>
 
-    <div style="background: white; border-radius: 12px; padding: 25px; box-shadow: 0 2px 15px rgba(0,0,0,0.08); display: flex; align-items: flex-start; gap: 15px;">
+    <div class="home-feature-card" style="background: white; border-radius: 12px; padding: 25px; box-shadow: 0 2px 15px rgba(0,0,0,0.08); display: flex; align-items: flex-start; gap: 15px;">
         <div style="font-size: 28px; min-width: 40px;">🛡️</div>
         <div>
             <h4 style="color: #1a3c6e; margin-bottom: 6px;">Admin Control</h4>
@@ -168,8 +168,8 @@
 </div>
 
 <!-- ====== CTA SECTION ====== -->
-<div style="background: linear-gradient(135deg, #1a3c6e 0%, #2563ab 100%); border-radius: 16px; padding: 50px 40px; text-align: center; box-shadow: 0 10px 40px rgba(26,60,110,0.3); margin-bottom: 20px;">
-    <h2 style="color: white; font-size: 28px; font-weight: 800; margin-bottom: 12px;">
+<div class="home-cta" style="background: linear-gradient(135deg, #1a3c6e 0%, #2563ab 100%); border-radius: 16px; padding: 50px 40px; text-align: center; box-shadow: 0 10px 40px rgba(26,60,110,0.3); margin-bottom: 20px;">
+    <h2 class="home-cta-title" style="color: white; font-size: 28px; font-weight: 800; margin-bottom: 12px;">
         Ready to Submit Your Complaint?
     </h2>
     <p style="color: rgba(255,255,255,0.8); margin-bottom: 25px; font-size: 15px;">
@@ -179,16 +179,16 @@
     <!-- ====== CTA BUTTON (role-aware) ====== -->
     {% if session.user_id %}
         {% if session.role == 'admin' %}
-            <a href="/admin" style="background: white; color: #1a3c6e; padding: 14px 36px; border-radius: 8px; text-decoration: none; font-weight: 700; font-size: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.2);">
+            <a href="/admin" class="home-cta-btn" style="background: white; color: #1a3c6e; padding: 14px 36px; border-radius: 8px; text-decoration: none; font-weight: 700; font-size: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.2);">
                 🛡️ Go to Admin Panel
             </a>
         {% else %}
-            <a href="/dashboard" style="background: white; color: #1a3c6e; padding: 14px 36px; border-radius: 8px; text-decoration: none; font-weight: 700; font-size: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.2);">
+            <a href="/dashboard" class="home-cta-btn" style="background: white; color: #1a3c6e; padding: 14px 36px; border-radius: 8px; text-decoration: none; font-weight: 700; font-size: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.2);">
                 📋 Go to My Dashboard
             </a>
         {% endif %}
     {% else %}
-        <a href="/register" style="background: white; color: #1a3c6e; padding: 14px 36px; border-radius: 8px; text-decoration: none; font-weight: 700; font-size: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.2);">
+        <a href="/register" class="home-cta-btn" style="background: white; color: #1a3c6e; padding: 14px 36px; border-radius: 8px; text-decoration: none; font-weight: 700; font-size: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.2);">
             🚀 Get Started Now
         </a>
     {% endif %}

@@ -53,6 +53,47 @@
             gap: 5px;
         }
 
+        .navbar .nav-toggle {
+            display: none;
+            align-items: center;
+            justify-content: center;
+            width: 40px;
+            height: 40px;
+            border: 1px solid rgba(255,255,255,0.35);
+            border-radius: 8px;
+            background: rgba(255,255,255,0.08);
+            color: white;
+            cursor: pointer;
+        }
+
+        .navbar .nav-toggle span {
+            position: relative;
+            display: block;
+            width: 20px;
+            height: 2px;
+            border-radius: 999px;
+            background: white;
+        }
+
+        .navbar .nav-toggle span::before,
+        .navbar .nav-toggle span::after {
+            content: "";
+            position: absolute;
+            left: 0;
+            width: 20px;
+            height: 2px;
+            border-radius: 999px;
+            background: white;
+        }
+
+        .navbar .nav-toggle span::before {
+            top: -6px;
+        }
+
+        .navbar .nav-toggle span::after {
+            top: 6px;
+        }
+
         .navbar .nav-links a {
             color: rgba(255,255,255,0.85);
             text-decoration: none;
@@ -311,27 +352,341 @@
         }
 
         /* ====== RESPONSIVE ====== */
-        @media (max-width: 768px) {
-            .navbar {
-                padding: 0 20px;
-                flex-wrap: wrap;
-                height: auto;
-                padding: 15px 20px;
-                gap: 10px;
+        @media (max-width: 900px) {
+            html,
+            body {
+                max-width: 100%;
+                overflow-x: hidden;
             }
+
+            .navbar {
+                height: auto;
+                min-height: 58px;
+                padding: 9px 14px;
+                flex-wrap: wrap;
+                gap: 0;
+            }
+
+            .navbar .logo {
+                font-size: 17px;
+                max-width: calc(100% - 52px);
+                white-space: nowrap;
+                overflow: hidden;
+                text-overflow: ellipsis;
+            }
+
+            .navbar .nav-toggle {
+                display: inline-flex;
+                margin-left: auto;
+            }
+
+            .navbar .nav-links {
+                display: none;
+                width: 100%;
+                flex-direction: column;
+                align-items: stretch;
+                gap: 6px;
+                padding-top: 10px;
+            }
+
+            .navbar .nav-links.is-open {
+                display: flex;
+            }
+
+            .navbar .nav-links a {
+                width: 100%;
+                padding: 10px 12px;
+                font-size: 14px;
+                line-height: 1.2;
+                white-space: nowrap;
+                overflow: hidden;
+                text-overflow: ellipsis;
+                border-radius: 8px;
+                background: rgba(255,255,255,0.08);
+            }
+
+            .navbar .nav-links a.logout {
+                margin-left: 0;
+                text-align: center;
+            }
+
+            .container {
+                padding: 0 15px;
+                margin: 16px auto;
+            }
+
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .home-hero {
+                padding: 34px 18px !important;
+                margin-bottom: 24px !important;
+                border-radius: 14px !important;
+            }
+
+            .home-hero-badge {
+                padding: 8px 14px !important;
+                margin-bottom: 16px !important;
+            }
+
+            .home-hero-badge span {
+                font-size: 11px !important;
+            }
+
+            .home-hero-title {
+                font-size: clamp(30px, 9vw, 38px) !important;
+                line-height: 1.12 !important;
+                margin-bottom: 14px !important;
+            }
+
+            .home-hero-text {
+                font-size: 15px !important;
+                line-height: 1.55 !important;
+                margin-bottom: 22px !important;
+            }
+
+            .home-hero-actions {
+                display: grid !important;
+                grid-template-columns: 1fr;
+                gap: 10px !important;
+            }
+
+            .home-hero-btn,
+            .home-cta-btn {
+                width: 100%;
+                padding: 12px 16px !important;
+                font-size: 14px !important;
+                text-align: center;
+            }
+
+            .home-stats {
+                padding: 18px !important;
+                margin-bottom: 28px !important;
+                gap: 14px !important;
+            }
+
+            .home-stats > div[style*="width: 1px"] {
+                display: none;
+            }
+
+            .home-section-heading {
+                margin-bottom: 12px !important;
+            }
+
+            .home-section-heading h2 {
+                font-size: 23px !important;
+            }
+
+            .home-steps-grid,
+            .home-feature-grid {
+                grid-template-columns: 1fr !important;
+                gap: 14px !important;
+                margin-bottom: 28px !important;
+            }
+
+            .home-step-card,
+            .home-feature-card {
+                padding: 18px !important;
+            }
+
+            .home-step-card > div:first-child {
+                width: 48px !important;
+                height: 48px !important;
+                margin-bottom: 12px !important;
+                font-size: 21px !important;
+            }
+
+            .home-feature-card {
+                gap: 12px !important;
+            }
+
+            .home-feature-card > div:first-child {
+                font-size: 24px !important;
+                min-width: 32px !important;
+            }
+
+            .home-cta {
+                padding: 30px 18px !important;
+                margin-bottom: 10px !important;
+                border-radius: 14px !important;
+            }
+
+            .home-cta-title {
+                font-size: 23px !important;
+            }
+
+            .auth-page {
+                min-height: auto !important;
+                align-items: flex-start !important;
+            }
+
+            .auth-card {
+                display: block !important;
+                max-width: 520px !important;
+                margin: 0 auto !important;
+                border-radius: 16px !important;
+                overflow: hidden !important;
+                box-shadow: 0 8px 28px rgba(15, 35, 75, 0.14) !important;
+            }
+
+            .auth-side-panel {
+                width: 100% !important;
+                min-height: auto !important;
+                padding: 22px 18px !important;
+                text-align: left !important;
+                align-items: flex-start !important;
+            }
+
+            .auth-side-panel > div:first-child {
+                font-size: 36px !important;
+                margin-bottom: 10px !important;
+            }
+
+            .auth-side-panel h2 {
+                font-size: 22px !important;
+                line-height: 1.18 !important;
+                margin-bottom: 8px !important;
+            }
+
+            .auth-side-panel p {
+                font-size: 14px !important;
+                line-height: 1.45 !important;
+                margin-bottom: 14px !important;
+            }
+
+            .auth-benefits {
+                display: grid !important;
+                grid-template-columns: 1fr !important;
+                gap: 8px !important;
+            }
+
+            .auth-benefits > div {
+                width: 100% !important;
+                padding: 9px 11px !important;
+                border-radius: 8px !important;
+                justify-content: flex-start !important;
+            }
+
+            .auth-benefits span {
+                font-size: 13px !important;
+                line-height: 1.25 !important;
+            }
+
+            .auth-form-panel {
+                width: 100% !important;
+                padding: 24px 18px 26px !important;
+            }
+
+            .auth-form-panel h2 {
+                font-size: 24px !important;
+                line-height: 1.15 !important;
+            }
+
+            .auth-form-panel p {
+                margin-bottom: 20px !important;
+            }
+
+            .form-group {
+                margin-bottom: 15px;
+            }
+
+            .form-group label {
+                font-size: 13px;
+                margin-bottom: 6px;
+            }
+
+            .form-group input,
+            .form-group select,
+            .form-group textarea {
+                min-height: 44px;
+                padding: 10px 12px;
+                font-size: 14px;
+            }
+
+            .dashboard-welcome {
+                display: block !important;
+                padding: 22px 18px !important;
+                border-radius: 14px !important;
+                margin-bottom: 18px !important;
+            }
+
+            .dashboard-welcome-title {
+                font-size: clamp(22px, 6vw, 28px) !important;
+                line-height: 1.18 !important;
+            }
+
+            .dashboard-welcome p {
+                font-size: 13px !important;
+                line-height: 1.35 !important;
+                margin-bottom: 16px !important;
+            }
+
+            .dashboard-welcome-btn {
+                width: 100%;
+                text-align: center;
+                padding: 11px 14px !important;
+            }
+
+            .stat-card {
+                padding: 22px 12px;
+                border-radius: 12px;
+            }
+
+            .stat-card .stat-number {
+                font-size: 34px;
+            }
+
+            .stat-card .stat-label {
+                font-size: 13px;
+            }
+
+            .card {
+                padding: 20px 16px;
+                border-radius: 14px;
+            }
+
+            .dashboard-card-header {
+                align-items: stretch !important;
+            }
+
+            .dashboard-card-header .btn {
+                width: 100%;
+                text-align: center;
+            }
+
+            .dashboard-filter-grid {
+                grid-template-columns: 1fr !important;
+            }
+
+            .dashboard-filter-grid input,
+            .dashboard-filter-grid select,
+            .dashboard-filter-grid button {
+                width: 100% !important;
+            }
+        }
+
+        @media (max-width: 425px) {
+            .container {
+                padding: 0 12px;
+                margin: 12px auto;
+            }
+
+            .navbar {
+                padding-left: 12px;
+                padding-right: 12px;
+            }
+
             .navbar .logo {
                 font-size: 16px;
             }
-            .navbar .nav-links a {
-                padding: 6px 10px;
-                font-size: 13px;
+
+            .home-hero {
+                padding: 28px 14px !important;
             }
-            .container {
-                padding: 0 15px;
-                margin: 20px auto;
-            }
-            .stats-grid {
-                grid-template-columns: repeat(2, 1fr);
+
+            .home-hero-title {
+                font-size: clamp(28px, 8.8vw, 34px) !important;
             }
         }
 
@@ -346,7 +701,10 @@
     <!-- ====== NAVBAR ====== -->
     <nav class="navbar">
         <a href="/" class="logo">🏛️ E-Governance Portal</a>
-        <div class="nav-links">
+        <button class="nav-toggle" type="button" aria-label="Toggle navigation" aria-expanded="false" aria-controls="mainNavLinks">
+            <span aria-hidden="true"></span>
+        </button>
+        <div class="nav-links" id="mainNavLinks">
             <a href="/">Home</a>
             <a href="/about">About</a>
             {% if session.user_id %}
@@ -385,6 +743,22 @@
     <footer class="footer">
         <p>© 2024 <span>E-Governance Portal</span> | Designed for Citizens of India 🇮🇳</p>
     </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const navToggle = document.querySelector('.nav-toggle');
+            const navLinks = document.querySelector('.nav-links');
+
+            if (!navToggle || !navLinks) {
+                return;
+            }
+
+            navToggle.addEventListener('click', function () {
+                const isOpen = navLinks.classList.toggle('is-open');
+                navToggle.setAttribute('aria-expanded', String(isOpen));
+            });
+        });
+    </script>
 
 </body>
 </html>
