@@ -4,417 +4,671 @@
 
 {% block content %}
 
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
+
 <style>
-    .about-page {
-        max-width: 1100px;
-        margin: 0 auto;
+    .eg-about {
+        --eg-primary: #1d4ed8;
+        --eg-primary-dark: #123a85;
+        --eg-cyan: #0ea5e9;
+        --eg-ink: #102033;
+        --eg-muted: #66758a;
+        --eg-line: rgba(29, 78, 216, 0.12);
+        --eg-card-shadow: 0 20px 45px rgba(15, 35, 75, 0.11);
+        --eg-hover-shadow: 0 28px 58px rgba(29, 78, 216, 0.18);
+        color: var(--eg-ink);
     }
 
-    .about-hero {
-        background:
-            linear-gradient(135deg, rgba(26, 60, 110, 0.96), rgba(8, 145, 178, 0.9)),
-            radial-gradient(circle at top right, rgba(255, 255, 255, 0.22), transparent 34%);
-        color: white;
-        border-radius: 8px;
-        padding: 54px 44px;
-        box-shadow: 0 18px 45px rgba(26, 60, 110, 0.22);
+    .eg-about * {
+        letter-spacing: 0;
+    }
+
+    .eg-about a {
+        text-decoration: none;
+    }
+
+    .eg-hero {
+        position: relative;
         overflow: hidden;
+        border-radius: 28px;
+        padding: 64px;
+        background:
+            radial-gradient(circle at 88% 12%, rgba(255, 255, 255, 0.28), transparent 28%),
+            radial-gradient(circle at 12% 86%, rgba(14, 165, 233, 0.38), transparent 30%),
+            linear-gradient(135deg, #123a85 0%, #1d4ed8 48%, #0ea5e9 100%);
+        box-shadow: 0 30px 70px rgba(18, 58, 133, 0.28);
+        color: #ffffff;
+        isolation: isolate;
     }
 
-    .about-kicker {
-        display: inline-block;
-        background: rgba(255, 255, 255, 0.14);
-        border: 1px solid rgba(255, 255, 255, 0.22);
+    .eg-hero::before {
+        content: "";
+        position: absolute;
+        inset: 18px;
+        border: 1px solid rgba(255, 255, 255, 0.18);
+        border-radius: 24px;
+        pointer-events: none;
+    }
+
+    .eg-hero-badge,
+    .eg-mini-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
         border-radius: 999px;
-        padding: 7px 14px;
         font-size: 13px;
         font-weight: 700;
-        margin-bottom: 18px;
+        line-height: 1;
     }
 
-    .about-hero h1 {
-        max-width: 790px;
-        font-size: 38px;
-        line-height: 1.18;
-        margin-bottom: 16px;
-        color: white;
+    .eg-hero-badge {
+        padding: 10px 14px;
+        background: rgba(255, 255, 255, 0.16);
+        border: 1px solid rgba(255, 255, 255, 0.26);
+        color: #ffffff;
+        backdrop-filter: blur(14px);
     }
 
-    .about-hero p {
+    .eg-hero h1 {
         max-width: 760px;
+        margin: 22px 0 18px;
+        color: #ffffff;
+        font-size: clamp(34px, 5vw, 64px);
+        font-weight: 800;
+        line-height: 1.04;
+    }
+
+    .eg-hero-text {
+        max-width: 680px;
         color: rgba(255, 255, 255, 0.9);
-        font-size: 17px;
+        font-size: 18px;
         line-height: 1.8;
     }
 
-    .about-stats {
-        display: grid;
-        grid-template-columns: repeat(3, 1fr);
-        gap: 16px;
-        margin-top: 28px;
+    .eg-hero-actions {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 12px;
+        margin-top: 30px;
     }
 
-    .about-stat {
-        background: rgba(255, 255, 255, 0.12);
+    .eg-btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 9px;
+        min-height: 46px;
+        padding: 12px 18px;
+        border-radius: 14px;
+        font-size: 14px;
+        font-weight: 800;
+        transition: transform 0.25s ease, box-shadow 0.25s ease, background 0.25s ease;
+    }
+
+    .eg-btn:hover {
+        transform: translateY(-2px);
+    }
+
+    .eg-btn-light {
+        background: #ffffff;
+        color: var(--eg-primary-dark);
+        box-shadow: 0 14px 28px rgba(8, 24, 55, 0.2);
+    }
+
+    .eg-btn-glass {
+        color: #ffffff;
+        background: rgba(255, 255, 255, 0.14);
+        border: 1px solid rgba(255, 255, 255, 0.25);
+        backdrop-filter: blur(14px);
+    }
+
+    .eg-glass-panel {
+        position: relative;
+        z-index: 1;
+        border-radius: 24px;
+        padding: 24px;
+        background: rgba(255, 255, 255, 0.15);
+        border: 1px solid rgba(255, 255, 255, 0.25);
+        box-shadow: 0 24px 48px rgba(8, 24, 55, 0.16);
+        backdrop-filter: blur(18px);
+    }
+
+    .eg-live-card {
+        display: flex;
+        align-items: flex-start;
+        gap: 14px;
+        padding: 16px;
+        border-radius: 18px;
+        background: rgba(255, 255, 255, 0.14);
         border: 1px solid rgba(255, 255, 255, 0.18);
-        border-radius: 8px;
-        padding: 18px;
     }
 
-    .about-stat strong {
+    .eg-live-icon {
+        width: 46px;
+        height: 46px;
+        flex: 0 0 46px;
+        display: grid;
+        place-items: center;
+        border-radius: 16px;
+        background: #ffffff;
+        color: var(--eg-primary);
+        font-size: 22px;
+    }
+
+    .eg-live-card strong {
         display: block;
-        font-size: 24px;
+        color: #ffffff;
+        font-size: 15px;
+        margin-bottom: 4px;
+    }
+
+    .eg-live-card span {
+        color: rgba(255, 255, 255, 0.78);
+        font-size: 13px;
+        line-height: 1.55;
+    }
+
+    .eg-status-bar {
+        height: 8px;
+        overflow: hidden;
+        border-radius: 999px;
+        background: rgba(255, 255, 255, 0.18);
+    }
+
+    .eg-status-bar span {
+        display: block;
+        width: 72%;
+        height: 100%;
+        border-radius: inherit;
+        background: linear-gradient(90deg, #ffffff, #bae6fd);
+    }
+
+    .eg-section {
+        margin-top: 34px;
+        padding: 42px;
+        border: 1px solid var(--eg-line);
+        border-radius: 28px;
+        background: rgba(255, 255, 255, 0.82);
+        box-shadow: var(--eg-card-shadow);
+    }
+
+    .eg-section-soft {
+        background:
+            linear-gradient(180deg, rgba(255, 255, 255, 0.9), rgba(239, 246, 255, 0.86)),
+            #ffffff;
+    }
+
+    .eg-mini-badge {
+        padding: 9px 12px;
+        color: var(--eg-primary);
+        background: #eff6ff;
+    }
+
+    .eg-section-title {
+        max-width: 780px;
+        margin-bottom: 26px;
+    }
+
+    .eg-section-title h2 {
+        margin: 14px 0 10px;
+        color: var(--eg-ink);
+        font-size: clamp(27px, 4vw, 42px);
+        font-weight: 800;
+        line-height: 1.12;
+    }
+
+    .eg-section-title p {
+        margin: 0;
+        color: var(--eg-muted);
+        font-size: 16px;
+        line-height: 1.8;
+    }
+
+    .eg-feature-card {
+        position: relative;
+        height: 100%;
+        min-height: 242px;
+        overflow: hidden;
+        border: 1px solid var(--eg-line);
+        border-radius: 24px;
+        padding: 26px;
+        background: #ffffff;
+        box-shadow: 0 12px 30px rgba(15, 35, 75, 0.07);
+        transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
+    }
+
+    .eg-feature-card::after {
+        content: "";
+        position: absolute;
+        inset: auto -42px -54px auto;
+        width: 138px;
+        height: 138px;
+        border-radius: 50%;
+        background: rgba(29, 78, 216, 0.08);
+    }
+
+    .eg-feature-card:hover {
+        transform: translateY(-8px);
+        border-color: rgba(29, 78, 216, 0.28);
+        box-shadow: var(--eg-hover-shadow);
+    }
+
+    .eg-feature-icon {
+        width: 56px;
+        height: 56px;
+        display: grid;
+        place-items: center;
+        border-radius: 18px;
+        margin-bottom: 22px;
+        color: #ffffff;
+        background: linear-gradient(135deg, var(--eg-primary), var(--eg-cyan));
+        box-shadow: 0 14px 28px rgba(29, 78, 216, 0.22);
+        font-size: 25px;
+    }
+
+    .eg-feature-card h3 {
+        color: var(--eg-ink);
+        font-size: 19px;
+        font-weight: 800;
+        margin-bottom: 10px;
+    }
+
+    .eg-feature-card p {
+        color: var(--eg-muted);
+        font-size: 14px;
+        line-height: 1.75;
+        margin: 0;
+    }
+
+    .eg-flow-card {
+        height: 100%;
+        border-radius: 24px;
+        padding: 28px;
+        background: linear-gradient(145deg, #0f2d5c, #1d4ed8);
+        color: #ffffff;
+        box-shadow: 0 22px 50px rgba(18, 58, 133, 0.22);
+    }
+
+    .eg-flow-item {
+        display: flex;
+        gap: 15px;
+        padding: 17px 0;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.16);
+    }
+
+    .eg-flow-item:last-child {
+        border-bottom: 0;
+        padding-bottom: 0;
+    }
+
+    .eg-flow-number {
+        width: 38px;
+        height: 38px;
+        flex: 0 0 38px;
+        display: grid;
+        place-items: center;
+        border-radius: 50%;
+        background: rgba(255, 255, 255, 0.16);
+        color: #ffffff;
+        font-size: 13px;
+        font-weight: 900;
+    }
+
+    .eg-flow-item h3 {
+        color: #ffffff;
+        font-size: 16px;
+        font-weight: 800;
         margin-bottom: 5px;
     }
 
-    .about-stat span {
-        color: rgba(255, 255, 255, 0.82);
-        font-size: 13px;
-        font-weight: 600;
+    .eg-flow-item p {
+        color: rgba(255, 255, 255, 0.78);
+        font-size: 14px;
+        line-height: 1.65;
+        margin: 0;
     }
 
-    .about-section {
-        margin-top: 28px;
-        background: white;
-        border: 1px solid #e5edf6;
-        border-radius: 8px;
+    .eg-dev-card {
+        position: relative;
+        height: 100%;
+        overflow: hidden;
+        border-radius: 28px;
         padding: 32px;
-        box-shadow: 0 8px 24px rgba(15, 23, 42, 0.07);
+        background:
+            radial-gradient(circle at top right, rgba(14, 165, 233, 0.22), transparent 34%),
+            linear-gradient(160deg, rgba(255, 255, 255, 0.96), rgba(239, 246, 255, 0.88));
+        border: 1px solid rgba(29, 78, 216, 0.16);
+        box-shadow: var(--eg-card-shadow);
+        transition: transform 0.28s ease, box-shadow 0.28s ease;
     }
 
-    .about-section-header {
+    .eg-dev-card:hover {
+        transform: translateY(-9px);
+        box-shadow: var(--eg-hover-shadow);
+    }
+
+    .eg-avatar-wrap {
+        position: relative;
+        width: 112px;
+        height: 112px;
         margin-bottom: 22px;
     }
 
-    .about-section-header span {
-        color: #0891b2;
-        font-size: 13px;
-        font-weight: 800;
-        text-transform: uppercase;
-        letter-spacing: 0.8px;
-    }
-
-    .about-section-header h2 {
-        color: #1a3c6e;
-        font-size: 25px;
-        margin-top: 7px;
-    }
-
-    .about-section p {
-        color: #53616f;
-        line-height: 1.8;
-        font-size: 15px;
-    }
-
-    .about-grid {
-        display: grid;
-        grid-template-columns: repeat(2, 1fr);
-        gap: 18px;
-    }
-
-    .about-feature,
-    .about-tech {
-        border: 1px solid #e7eef8;
-        background: #f8fbff;
-        border-radius: 8px;
-        padding: 20px;
-    }
-
-    .about-feature h3,
-    .about-tech h3 {
-        color: #1a3c6e;
-        font-size: 17px;
-        margin-bottom: 8px;
-    }
-
-    .about-feature p,
-    .about-tech p {
-        color: #64748b;
-        font-size: 14px;
-        line-height: 1.7;
-    }
-
-    .about-icon {
-        width: 42px;
-        height: 42px;
-        display: grid;
-        place-items: center;
-        background: #e0f2fe;
-        color: #075985;
-        border-radius: 8px;
-        font-weight: 800;
-        margin-bottom: 14px;
-    }
-
-    .about-two-column {
-        display: grid;
-        grid-template-columns: 1.1fr 0.9fr;
-        gap: 24px;
-        align-items: stretch;
-    }
-
-    .about-steps {
-        display: grid;
-        gap: 14px;
-    }
-
-    .about-step {
-        display: flex;
-        gap: 14px;
-        align-items: flex-start;
-        padding: 16px;
-        background: #f8fbff;
-        border: 1px solid #e7eef8;
-        border-radius: 8px;
-    }
-
-    .about-step-number {
-        width: 30px;
-        height: 30px;
-        flex: 0 0 30px;
+    .eg-avatar-ring {
+        position: absolute;
+        inset: 0;
         border-radius: 50%;
-        background: #1a3c6e;
-        color: white;
+        background: linear-gradient(135deg, var(--eg-primary), var(--eg-cyan));
+        padding: 4px;
+    }
+
+    .eg-avatar {
+        width: 100%;
+        height: 100%;
         display: grid;
         place-items: center;
-        font-weight: 800;
-        font-size: 13px;
-    }
-
-    .about-step h3 {
-        color: #1a3c6e;
-        font-size: 16px;
-        margin-bottom: 5px;
-    }
-
-    .about-developer-card {
-        background: linear-gradient(135deg, #1a3c6e, #0891b2);
-        color: white;
-        border-radius: 8px;
-        padding: 28px;
-        display: flex;
-        flex-direction: column;
-        justify-content: space-between;
-        min-height: 100%;
-    }
-
-    .about-avatar {
-        width: 70px;
-        height: 70px;
         border-radius: 50%;
-        background: white;
-        color: #1a3c6e;
-        display: grid;
-        place-items: center;
-        font-size: 24px;
+        background: #ffffff;
+        color: var(--eg-primary);
+        font-size: 33px;
+        font-weight: 900;
+        box-shadow: inset 0 0 0 8px #eff6ff;
+    }
+
+    .eg-dev-card h2 {
+        color: var(--eg-ink);
+        font-size: 29px;
+        font-weight: 900;
+        margin-bottom: 6px;
+    }
+
+    .eg-dev-role {
+        display: inline-flex;
+        align-items: center;
+        gap: 7px;
+        padding: 9px 13px;
+        border-radius: 999px;
+        background: #dbeafe;
+        color: #1e40af;
+        font-size: 13px;
         font-weight: 800;
         margin-bottom: 18px;
     }
 
-    .about-developer-card h2 {
-        color: white;
-        font-size: 24px;
-        margin-bottom: 8px;
+    .eg-dev-card p {
+        color: var(--eg-muted);
+        font-size: 15px;
+        line-height: 1.8;
+        margin-bottom: 22px;
     }
 
-    .about-developer-card p {
-        color: rgba(255, 255, 255, 0.86);
+    .eg-dev-meta {
+        display: grid;
+        gap: 10px;
     }
 
-    .about-role {
-        display: inline-block;
-        margin-top: 18px;
-        background: rgba(255, 255, 255, 0.14);
-        border: 1px solid rgba(255, 255, 255, 0.22);
-        border-radius: 999px;
-        padding: 8px 14px;
-        color: white;
-        font-size: 13px;
+    .eg-dev-meta span {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        color: #334155;
+        font-size: 14px;
         font-weight: 700;
     }
 
-    @media (max-width: 850px) {
-        .about-hero {
-            padding: 38px 26px;
+    .eg-tech-pill {
+        display: inline-flex;
+        align-items: center;
+        gap: 10px;
+        min-height: 54px;
+        padding: 13px 16px;
+        border-radius: 18px;
+        background: #ffffff;
+        border: 1px solid var(--eg-line);
+        box-shadow: 0 10px 24px rgba(15, 35, 75, 0.06);
+        color: #334155;
+        font-size: 14px;
+        font-weight: 800;
+    }
+
+    .eg-tech-pill i {
+        color: var(--eg-primary);
+        font-size: 22px;
+    }
+
+    @media (max-width: 991px) {
+        .eg-hero {
+            padding: 42px 30px;
         }
 
-        .about-hero h1 {
-            font-size: 30px;
-        }
-
-        .about-stats,
-        .about-grid,
-        .about-two-column {
-            grid-template-columns: 1fr;
+        .eg-section {
+            padding: 32px 24px;
         }
     }
 
-    @media (max-width: 520px) {
-        .about-hero {
-            padding: 32px 22px;
+    @media (max-width: 575px) {
+        .eg-hero {
+            border-radius: 22px;
+            padding: 34px 22px;
         }
 
-        .about-hero h1 {
-            font-size: 26px;
+        .eg-hero-actions {
+            display: grid;
         }
 
-        .about-section {
-            padding: 24px 18px;
+        .eg-btn {
+            width: 100%;
+        }
+
+        .eg-glass-panel,
+        .eg-section,
+        .eg-feature-card,
+        .eg-flow-card,
+        .eg-dev-card {
+            border-radius: 20px;
         }
     }
 </style>
 
-<div class="about-page">
-    <section class="about-hero">
-        <span class="about-kicker">Digital public service platform</span>
-        <h1>E-Governance Complaint & Service Management Portal</h1>
-        <p>
-            This portal helps citizens raise complaints online, track progress clearly,
-            and receive updates without unnecessary office visits. It is designed for
-            faster communication between citizens and the administration.
-        </p>
-
-        <div class="about-stats">
-            <div class="about-stat">
-                <strong>24x7</strong>
-                <span>Online access</span>
-            </div>
-            <div class="about-stat">
-                <strong>Live</strong>
-                <span>Status tracking</span>
-            </div>
-            <div class="about-stat">
-                <strong>Secure</strong>
-                <span>User and admin access</span>
-            </div>
-        </div>
-    </section>
-
-    <section class="about-section">
-        <div class="about-section-header">
-            <span>Purpose</span>
-            <h2>Why this portal was created</h2>
-        </div>
-        <p>
-            Traditional complaint handling can take time because citizens often need to
-            visit offices, submit papers, and wait for manual updates. This portal keeps
-            the process online, organized, and easier to follow. Citizens can submit a
-            complaint, admins can manage it, and everyone can see the latest status.
-        </p>
-    </section>
-
-    <section class="about-section">
-        <div class="about-section-header">
-            <span>Features</span>
-            <h2>What citizens and admins can do</h2>
-        </div>
-
-        <div class="about-grid">
-            <div class="about-feature">
-                <div class="about-icon">01</div>
-                <h3>Online Complaint Submission</h3>
-                <p>Citizens can submit complaint details and supporting files from the portal.</p>
-            </div>
-
-            <div class="about-feature">
-                <div class="about-icon">02</div>
-                <h3>Real-Time Status Tracking</h3>
-                <p>Users can check whether a complaint is pending, in progress, or resolved.</p>
-            </div>
-
-            <div class="about-feature">
-                <div class="about-icon">03</div>
-                <h3>Role-Based Access</h3>
-                <p>Citizens and administrators get separate access based on their work.</p>
-            </div>
-
-            <div class="about-feature">
-                <div class="about-icon">04</div>
-                <h3>Admin Dashboard</h3>
-                <p>Admins can review complaints, update status, and manage user feedback.</p>
-            </div>
-        </div>
-    </section>
-
-    <section class="about-section">
-        <div class="about-two-column">
-            <div>
-                <div class="about-section-header">
-                    <span>Workflow</span>
-                    <h2>Simple complaint process</h2>
-                </div>
-
-                <div class="about-steps">
-                    <div class="about-step">
-                        <div class="about-step-number">1</div>
-                        <div>
-                            <h3>Register or login</h3>
-                            <p>Create an account or login to access complaint services.</p>
-                        </div>
-                    </div>
-
-                    <div class="about-step">
-                        <div class="about-step-number">2</div>
-                        <div>
-                            <h3>Submit complaint</h3>
-                            <p>Add the issue, category, location, description, and file if needed.</p>
-                        </div>
-                    </div>
-
-                    <div class="about-step">
-                        <div class="about-step-number">3</div>
-                        <div>
-                            <h3>Track updates</h3>
-                            <p>Follow status changes from the dashboard until the complaint is resolved.</p>
-                        </div>
-                    </div>
+<div class="eg-about">
+    <section class="eg-hero">
+        <div class="row g-4 align-items-center">
+            <div class="col-lg-7">
+                <span class="eg-hero-badge">
+                    <i class="bi bi-shield-check"></i>
+                    Digital Governance Platform
+                </span>
+                <h1>Modern complaint management for smarter citizen services.</h1>
+                <p class="eg-hero-text">
+                    A production-ready public service portal where citizens can register
+                    complaints, track progress, and stay connected with transparent
+                    administrative updates.
+                </p>
+                <div class="eg-hero-actions">
+                    <a href="/submit-complaint" class="eg-btn eg-btn-light">
+                        <i class="bi bi-send-check"></i>
+                        Register Complaint
+                    </a>
+                    <a href="/dashboard" class="eg-btn eg-btn-glass">
+                        <i class="bi bi-activity"></i>
+                        Track Progress
+                    </a>
                 </div>
             </div>
 
-            <div class="about-developer-card">
-                <div>
-                    <div class="about-avatar">SK</div>
-                    <span class="about-kicker">Developed by</span>
-                    <h2>Shivnandan Kumar</h2>
+            <div class="col-lg-5">
+                <div class="eg-glass-panel">
+                    <div class="eg-live-card mb-3">
+                        <div class="eg-live-icon"><i class="bi bi-file-earmark-plus"></i></div>
+                        <div>
+                            <strong>Complaint Registered</strong>
+                            <span>Citizen issue captured with category, area, and details.</span>
+                        </div>
+                    </div>
+                    <div class="eg-live-card mb-3">
+                        <div class="eg-live-icon"><i class="bi bi-arrow-repeat"></i></div>
+                        <div>
+                            <strong>Admin Review Active</strong>
+                            <span>Status updates keep the process visible and accountable.</span>
+                        </div>
+                    </div>
+                    <div class="eg-status-bar mb-3"><span></span></div>
+                    <div class="d-flex justify-content-between align-items-center text-white">
+                        <span class="fw-bold">Resolution Progress</span>
+                        <span class="fw-bold">72%</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="eg-section eg-section-soft">
+        <div class="eg-section-title">
+            <span class="eg-mini-badge">
+                <i class="bi bi-stars"></i>
+                Portal Capabilities
+            </span>
+            <h2>Built like a modern SaaS product, focused on citizen service.</h2>
+            <p>
+                The About page now explains the portal through clear, professional feature
+                cards instead of an old academic-style purpose block.
+            </p>
+        </div>
+
+        <div class="row g-4">
+            <div class="col-md-6 col-xl">
+                <div class="eg-feature-card">
+                    <div class="eg-feature-icon"><i class="bi bi-pencil-square"></i></div>
+                    <h3>Complaint Registration</h3>
+                    <p>Citizens can submit issues online with important details and supporting information.</p>
+                </div>
+            </div>
+
+            <div class="col-md-6 col-xl">
+                <div class="eg-feature-card">
+                    <div class="eg-feature-icon"><i class="bi bi-speedometer2"></i></div>
+                    <h3>Real-Time Tracking</h3>
+                    <p>Users can follow complaint status updates from their dashboard without confusion.</p>
+                </div>
+            </div>
+
+            <div class="col-md-6 col-xl">
+                <div class="eg-feature-card">
+                    <div class="eg-feature-icon"><i class="bi bi-eye"></i></div>
+                    <h3>Transparent Governance</h3>
+                    <p>The process becomes more visible because every complaint has a clear status flow.</p>
+                </div>
+            </div>
+
+            <div class="col-md-6 col-xl">
+                <div class="eg-feature-card">
+                    <div class="eg-feature-icon"><i class="bi bi-lightning-charge"></i></div>
+                    <h3>Fast Resolution</h3>
+                    <p>Admins can review, prioritize, and update complaints from a focused dashboard.</p>
+                </div>
+            </div>
+
+            <div class="col-md-6 col-xl">
+                <div class="eg-feature-card">
+                    <div class="eg-feature-icon"><i class="bi bi-people"></i></div>
+                    <h3>Citizen-Centric Services</h3>
+                    <p>The portal keeps citizen convenience at the center with online access and feedback.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="eg-section">
+        <div class="row g-4 align-items-stretch">
+            <div class="col-lg-7">
+                <div class="eg-section-title mb-3">
+                    <span class="eg-mini-badge">
+                        <i class="bi bi-diagram-3"></i>
+                        How It Works
+                    </span>
+                    <h2>A clean workflow from complaint to resolution.</h2>
                     <p>
-                        Built with focus on clear complaint tracking, simple user flow,
-                        and practical admin management.
+                        Simple English mein: user complaint submit karta hai, admin review
+                        karta hai, status update hota hai, aur citizen dashboard se progress
+                        check kar sakta hai.
                     </p>
                 </div>
-                <span class="about-role">Portal Developer</span>
+
+                <div class="d-flex flex-wrap gap-3 mt-4">
+                    <span class="eg-tech-pill"><i class="bi bi-code-slash"></i> Python</span>
+                    <span class="eg-tech-pill"><i class="bi bi-window"></i> Flask</span>
+                    <span class="eg-tech-pill"><i class="bi bi-database"></i> Database</span>
+                    <span class="eg-tech-pill"><i class="bi bi-brush"></i> Bootstrap 5</span>
+                </div>
+            </div>
+
+            <div class="col-lg-5">
+                <div class="eg-flow-card">
+                    <div class="eg-flow-item">
+                        <div class="eg-flow-number">1</div>
+                        <div>
+                            <h3>Register the issue</h3>
+                            <p>Citizen complaint details portal mein submit karta hai.</p>
+                        </div>
+                    </div>
+                    <div class="eg-flow-item">
+                        <div class="eg-flow-number">2</div>
+                        <div>
+                            <h3>Admin reviews it</h3>
+                            <p>Admin panel se complaint check aur manage hoti hai.</p>
+                        </div>
+                    </div>
+                    <div class="eg-flow-item">
+                        <div class="eg-flow-number">3</div>
+                        <div>
+                            <h3>Status gets updated</h3>
+                            <p>User dashboard par latest complaint progress visible hoti hai.</p>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </section>
 
-    <section class="about-section">
-        <div class="about-section-header">
-            <span>Technology</span>
-            <h2>Technology used in this portal</h2>
-        </div>
-
-        <div class="about-grid">
-            <div class="about-tech">
-                <div class="about-icon">PY</div>
-                <h3>Python</h3>
-                <p>Main programming language used for backend logic.</p>
+    <section class="eg-section eg-section-soft">
+        <div class="row g-4 align-items-center">
+            <div class="col-lg-6">
+                <div class="eg-section-title mb-0">
+                    <span class="eg-mini-badge">
+                        <i class="bi bi-person-workspace"></i>
+                        Developed By
+                    </span>
+                    <h2>Professional developer profile, not a college-project team block.</h2>
+                    <p>
+                        The developer section now presents a single clean portfolio card
+                        with modern spacing, avatar, role, and hover animation.
+                    </p>
+                </div>
             </div>
 
-            <div class="about-tech">
-                <div class="about-icon">FL</div>
-                <h3>Flask</h3>
-                <p>Web framework used to create routes and render pages.</p>
-            </div>
-
-            <div class="about-tech">
-                <div class="about-icon">DB</div>
-                <h3>Database</h3>
-                <p>Stores users, complaints, timelines, and feedback records.</p>
-            </div>
-
-            <div class="about-tech">
-                <div class="about-icon">UI</div>
-                <h3>HTML & CSS</h3>
-                <p>Used for page structure, layout, and responsive user interface.</p>
+            <div class="col-lg-6">
+                <div class="eg-dev-card">
+                    <div class="eg-avatar-wrap">
+                        <div class="eg-avatar-ring">
+                            <div class="eg-avatar">SK</div>
+                        </div>
+                    </div>
+                    <span class="eg-dev-role">
+                        <i class="bi bi-layers"></i>
+                        Full Stack Developer
+                    </span>
+                    <h2>Shivnandan Kumar</h2>
+                    <p>
+                        Designed and developed the portal experience with focus on clean
+                        user flow, practical admin management, and responsive UI.
+                    </p>
+                    <div class="eg-dev-meta">
+                        <span><i class="bi bi-check2-circle text-primary"></i> Complaint workflow design</span>
+                        <span><i class="bi bi-check2-circle text-primary"></i> User and admin interface development</span>
+                        <span><i class="bi bi-check2-circle text-primary"></i> Responsive frontend implementation</span>
+                    </div>
+                </div>
             </div>
         </div>
     </section>
