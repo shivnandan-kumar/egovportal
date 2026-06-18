@@ -469,11 +469,11 @@
     .eg-feature-card {
         position: relative;
         height: 100%;
-        min-height: 242px;
+        min-height: 260px;
         overflow: hidden;
         border: 1px solid var(--eg-line);
         border-radius: 24px;
-        padding: 26px;
+        padding: 24px 24px 26px;
         background:
             linear-gradient(160deg, rgba(255, 255, 255, 0.95), rgba(239, 246, 255, 0.72)),
             var(--eg-surface-strong);
@@ -481,16 +481,19 @@
         transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
         backdrop-filter: blur(14px);
         -webkit-backdrop-filter: blur(14px);
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
     }
 
     .eg-feature-card::after {
         content: "";
         position: absolute;
-        inset: auto -42px -54px auto;
-        width: 138px;
-        height: 138px;
+        inset: auto -26px -30px auto;
+        width: 82px;
+        height: 82px;
         border-radius: 50%;
-        background: rgba(29, 78, 216, 0.08);
+        background: rgba(29, 78, 216, 0.055);
     }
 
     .eg-feature-card:hover {
@@ -502,10 +505,11 @@
     .eg-feature-icon {
         width: 56px;
         height: 56px;
+        flex: 0 0 56px;
         display: grid;
         place-items: center;
         border-radius: 18px;
-        margin-bottom: 22px;
+        margin-bottom: 20px;
         color: #ffffff;
         background: linear-gradient(135deg, var(--eg-primary), var(--eg-cyan));
         box-shadow: 0 14px 28px rgba(29, 78, 216, 0.22);
@@ -529,14 +533,17 @@
         color: var(--eg-ink);
         font-size: 19px;
         font-weight: 800;
+        line-height: 1.28;
         margin-bottom: 10px;
+        min-height: 48px;
     }
 
     .eg-feature-card p {
         color: var(--eg-muted);
         font-size: 14px;
-        line-height: 1.75;
+        line-height: 1.65;
         margin: 0;
+        max-width: 96%;
     }
 
     .eg-flow-card {
@@ -719,7 +726,7 @@
         }
 
         .eg-feature-card {
-            min-height: 220px;
+            min-height: 230px;
         }
     }
 
@@ -761,6 +768,14 @@
         .eg-feature-card {
             min-height: auto;
             padding: 22px;
+        }
+
+        .eg-feature-card h3 {
+            min-height: 0;
+        }
+
+        .eg-feature-card p {
+            max-width: 100%;
         }
 
         .eg-live-card,
@@ -932,7 +947,7 @@
         </div>
 
         <div class="row g-4">
-            <div class="col-md-6 col-xl">
+            <div class="col-md-6 col-xl d-flex">
                 <div class="eg-feature-card about-animate reveal-up premium-glass glass-card hover-lift">
                     <div class="eg-feature-icon">
                         <svg viewBox="0 0 64 64" aria-hidden="true">
@@ -946,7 +961,7 @@
                 </div>
             </div>
 
-            <div class="col-md-6 col-xl">
+            <div class="col-md-6 col-xl d-flex">
                 <div class="eg-feature-card about-animate reveal-up premium-glass glass-card hover-lift">
                     <div class="eg-feature-icon">
                         <svg viewBox="0 0 64 64" aria-hidden="true">
@@ -961,7 +976,7 @@
                 </div>
             </div>
 
-            <div class="col-md-6 col-xl">
+            <div class="col-md-6 col-xl d-flex">
                 <div class="eg-feature-card about-animate reveal-up premium-glass glass-card hover-lift">
                     <div class="eg-feature-icon">
                         <svg viewBox="0 0 64 64" aria-hidden="true">
@@ -975,7 +990,7 @@
                 </div>
             </div>
 
-            <div class="col-md-6 col-xl">
+            <div class="col-md-6 col-xl d-flex">
                 <div class="eg-feature-card about-animate reveal-up premium-glass glass-card hover-lift">
                     <div class="eg-feature-icon">
                         <svg viewBox="0 0 64 64" aria-hidden="true">
@@ -988,7 +1003,7 @@
                 </div>
             </div>
 
-            <div class="col-md-6 col-xl">
+            <div class="col-md-6 col-xl d-flex">
                 <div class="eg-feature-card about-animate reveal-up premium-glass glass-card hover-lift">
                     <div class="eg-feature-icon">
                         <svg viewBox="0 0 64 64" aria-hidden="true">
