@@ -4,140 +4,420 @@
 
 {% block content %}
 
-<div style="max-width: 800px; margin: 0 auto;">
+<style>
+    .about-page {
+        max-width: 1100px;
+        margin: 0 auto;
+    }
 
-    <!-- ====== ABOUT HEADER ====== -->
-    <div style="background: white; padding: 40px; border-radius: 10px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); margin-bottom: 30px; text-align: center;">
-        <div style="font-size: 60px;">🏛️</div>
-        <h1 style="color: #1a3c6e; margin: 15px 0 10px;">
-            E-Governance Complaint & Service Management Portal
-        </h1>
-        <p style="color: #666; font-size: 16px; line-height: 1.6;">
-            A digital platform designed to bridge the gap between citizens and government,
-            making complaint management transparent, efficient and accountable.
+    .about-hero {
+        background:
+            linear-gradient(135deg, rgba(26, 60, 110, 0.96), rgba(8, 145, 178, 0.9)),
+            radial-gradient(circle at top right, rgba(255, 255, 255, 0.22), transparent 34%);
+        color: white;
+        border-radius: 8px;
+        padding: 54px 44px;
+        box-shadow: 0 18px 45px rgba(26, 60, 110, 0.22);
+        overflow: hidden;
+    }
+
+    .about-kicker {
+        display: inline-block;
+        background: rgba(255, 255, 255, 0.14);
+        border: 1px solid rgba(255, 255, 255, 0.22);
+        border-radius: 999px;
+        padding: 7px 14px;
+        font-size: 13px;
+        font-weight: 700;
+        margin-bottom: 18px;
+    }
+
+    .about-hero h1 {
+        max-width: 790px;
+        font-size: 38px;
+        line-height: 1.18;
+        margin-bottom: 16px;
+        color: white;
+    }
+
+    .about-hero p {
+        max-width: 760px;
+        color: rgba(255, 255, 255, 0.9);
+        font-size: 17px;
+        line-height: 1.8;
+    }
+
+    .about-stats {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 16px;
+        margin-top: 28px;
+    }
+
+    .about-stat {
+        background: rgba(255, 255, 255, 0.12);
+        border: 1px solid rgba(255, 255, 255, 0.18);
+        border-radius: 8px;
+        padding: 18px;
+    }
+
+    .about-stat strong {
+        display: block;
+        font-size: 24px;
+        margin-bottom: 5px;
+    }
+
+    .about-stat span {
+        color: rgba(255, 255, 255, 0.82);
+        font-size: 13px;
+        font-weight: 600;
+    }
+
+    .about-section {
+        margin-top: 28px;
+        background: white;
+        border: 1px solid #e5edf6;
+        border-radius: 8px;
+        padding: 32px;
+        box-shadow: 0 8px 24px rgba(15, 23, 42, 0.07);
+    }
+
+    .about-section-header {
+        margin-bottom: 22px;
+    }
+
+    .about-section-header span {
+        color: #0891b2;
+        font-size: 13px;
+        font-weight: 800;
+        text-transform: uppercase;
+        letter-spacing: 0.8px;
+    }
+
+    .about-section-header h2 {
+        color: #1a3c6e;
+        font-size: 25px;
+        margin-top: 7px;
+    }
+
+    .about-section p {
+        color: #53616f;
+        line-height: 1.8;
+        font-size: 15px;
+    }
+
+    .about-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 18px;
+    }
+
+    .about-feature,
+    .about-tech {
+        border: 1px solid #e7eef8;
+        background: #f8fbff;
+        border-radius: 8px;
+        padding: 20px;
+    }
+
+    .about-feature h3,
+    .about-tech h3 {
+        color: #1a3c6e;
+        font-size: 17px;
+        margin-bottom: 8px;
+    }
+
+    .about-feature p,
+    .about-tech p {
+        color: #64748b;
+        font-size: 14px;
+        line-height: 1.7;
+    }
+
+    .about-icon {
+        width: 42px;
+        height: 42px;
+        display: grid;
+        place-items: center;
+        background: #e0f2fe;
+        color: #075985;
+        border-radius: 8px;
+        font-weight: 800;
+        margin-bottom: 14px;
+    }
+
+    .about-two-column {
+        display: grid;
+        grid-template-columns: 1.1fr 0.9fr;
+        gap: 24px;
+        align-items: stretch;
+    }
+
+    .about-steps {
+        display: grid;
+        gap: 14px;
+    }
+
+    .about-step {
+        display: flex;
+        gap: 14px;
+        align-items: flex-start;
+        padding: 16px;
+        background: #f8fbff;
+        border: 1px solid #e7eef8;
+        border-radius: 8px;
+    }
+
+    .about-step-number {
+        width: 30px;
+        height: 30px;
+        flex: 0 0 30px;
+        border-radius: 50%;
+        background: #1a3c6e;
+        color: white;
+        display: grid;
+        place-items: center;
+        font-weight: 800;
+        font-size: 13px;
+    }
+
+    .about-step h3 {
+        color: #1a3c6e;
+        font-size: 16px;
+        margin-bottom: 5px;
+    }
+
+    .about-developer-card {
+        background: linear-gradient(135deg, #1a3c6e, #0891b2);
+        color: white;
+        border-radius: 8px;
+        padding: 28px;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        min-height: 100%;
+    }
+
+    .about-avatar {
+        width: 70px;
+        height: 70px;
+        border-radius: 50%;
+        background: white;
+        color: #1a3c6e;
+        display: grid;
+        place-items: center;
+        font-size: 24px;
+        font-weight: 800;
+        margin-bottom: 18px;
+    }
+
+    .about-developer-card h2 {
+        color: white;
+        font-size: 24px;
+        margin-bottom: 8px;
+    }
+
+    .about-developer-card p {
+        color: rgba(255, 255, 255, 0.86);
+    }
+
+    .about-role {
+        display: inline-block;
+        margin-top: 18px;
+        background: rgba(255, 255, 255, 0.14);
+        border: 1px solid rgba(255, 255, 255, 0.22);
+        border-radius: 999px;
+        padding: 8px 14px;
+        color: white;
+        font-size: 13px;
+        font-weight: 700;
+    }
+
+    @media (max-width: 850px) {
+        .about-hero {
+            padding: 38px 26px;
+        }
+
+        .about-hero h1 {
+            font-size: 30px;
+        }
+
+        .about-stats,
+        .about-grid,
+        .about-two-column {
+            grid-template-columns: 1fr;
+        }
+    }
+
+    @media (max-width: 520px) {
+        .about-hero {
+            padding: 32px 22px;
+        }
+
+        .about-hero h1 {
+            font-size: 26px;
+        }
+
+        .about-section {
+            padding: 24px 18px;
+        }
+    }
+</style>
+
+<div class="about-page">
+    <section class="about-hero">
+        <span class="about-kicker">Digital public service platform</span>
+        <h1>E-Governance Complaint & Service Management Portal</h1>
+        <p>
+            This portal helps citizens raise complaints online, track progress clearly,
+            and receive updates without unnecessary office visits. It is designed for
+            faster communication between citizens and the administration.
         </p>
-    </div>
 
-    <!-- ====== PURPOSE ====== -->
-    <div style="background: white; padding: 30px; border-radius: 10px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); margin-bottom: 30px;">
-        <h2 style="color: #1a3c6e; margin-bottom: 15px;">🎯 Purpose of This Portal</h2>
-        <p style="color: #555; line-height: 1.8; font-size: 15px;">
-            This portal was built to replace the traditional manual complaint handling system
-            with a modern digital platform. Citizens can now register their complaints online,
-            track their status in real-time, and get timely resolutions without visiting
-            government offices physically.
+        <div class="about-stats">
+            <div class="about-stat">
+                <strong>24x7</strong>
+                <span>Online access</span>
+            </div>
+            <div class="about-stat">
+                <strong>Live</strong>
+                <span>Status tracking</span>
+            </div>
+            <div class="about-stat">
+                <strong>Secure</strong>
+                <span>User and admin access</span>
+            </div>
+        </div>
+    </section>
+
+    <section class="about-section">
+        <div class="about-section-header">
+            <span>Purpose</span>
+            <h2>Why this portal was created</h2>
+        </div>
+        <p>
+            Traditional complaint handling can take time because citizens often need to
+            visit offices, submit papers, and wait for manual updates. This portal keeps
+            the process online, organized, and easier to follow. Citizens can submit a
+            complaint, admins can manage it, and everyone can see the latest status.
         </p>
-    </div>
+    </section>
 
-    <!-- ====== FEATURES ====== -->
-    <div style="background: white; padding: 30px; border-radius: 10px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); margin-bottom: 30px;">
-        <h2 style="color: #1a3c6e; margin-bottom: 20px;">⭐ Key Features</h2>
-
-        <div style="display: flex; flex-direction: column; gap: 15px;">
-
-            <div style="display: flex; align-items: flex-start; gap: 15px;">
-                <div style="font-size: 25px;">📝</div>
-                <div>
-                    <h4 style="color: #1a3c6e; margin-bottom: 4px;">Online Complaint Submission</h4>
-                    <p style="color: #666;">Citizens can submit complaints from anywhere, anytime.</p>
-                </div>
-            </div>
-
-            <div style="display: flex; align-items: flex-start; gap: 15px;">
-                <div style="font-size: 25px;">🔍</div>
-                <div>
-                    <h4 style="color: #1a3c6e; margin-bottom: 4px;">Real-Time Status Tracking</h4>
-                    <p style="color: #666;">Track the progress of your complaint at every stage.</p>
-                </div>
-            </div>
-
-            <div style="display: flex; align-items: flex-start; gap: 15px;">
-                <div style="font-size: 25px;">🛡️</div>
-                <div>
-                    <h4 style="color: #1a3c6e; margin-bottom: 4px;">Role-Based Access Control</h4>
-                    <p style="color: #666;">Separate secure access for citizens and administrators.</p>
-                </div>
-            </div>
-
-            <div style="display: flex; align-items: flex-start; gap: 15px;">
-                <div style="font-size: 25px;">📊</div>
-                <div>
-                    <h4 style="color: #1a3c6e; margin-bottom: 4px;">Admin Dashboard</h4>
-                    <p style="color: #666;">Admins can view, manage and resolve all complaints efficiently.</p>
-                </div>
-            </div>
-
-        </div>
-    </div>
-
-    <!-- ====== TECH STACK ====== -->
-    <div style="background: white; padding: 30px; border-radius: 10px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); margin-bottom: 30px;">
-        <h2 style="color: #1a3c6e; margin-bottom: 20px;">🛠️ Technology Used</h2>
-
-        <div style="display: flex; gap: 15px; flex-wrap: wrap;">
-
-            <div style="background: #f0f2f5; padding: 15px 25px; border-radius: 8px; text-align: center;">
-                <div style="font-size: 30px;">🐍</div>
-                <div style="font-weight: bold; margin-top: 8px; color: #1a3c6e;">Python</div>
-                <div style="font-size: 13px; color: #666;">Backend</div>
-            </div>
-
-            <div style="background: #f0f2f5; padding: 15px 25px; border-radius: 8px; text-align: center;">
-                <div style="font-size: 30px;">⚗️</div>
-                <div style="font-weight: bold; margin-top: 8px; color: #1a3c6e;">Flask</div>
-                <div style="font-size: 13px; color: #666;">Web Framework</div>
-            </div>
-
-            <div style="background: #f0f2f5; padding: 15px 25px; border-radius: 8px; text-align: center;">
-                <div style="font-size: 30px;">🗄️</div>
-                <div style="font-weight: bold; margin-top: 8px; color: #1a3c6e;">SQLite</div>
-                <div style="font-size: 13px; color: #666;">Database</div>
-            </div>
-
-            <div style="background: #f0f2f5; padding: 15px 25px; border-radius: 8px; text-align: center;">
-                <div style="font-size: 30px;">🌐</div>
-                <div style="font-weight: bold; margin-top: 8px; color: #1a3c6e;">HTML/CSS</div>
-                <div style="font-size: 13px; color: #666;">Frontend</div>
-            </div>
-
-        </div>
-    </div>
-
-    <!-- ====== DEVELOPERS ====== -->
-    <div style="background: #1a3c6e; color: white; padding: 30px; border-radius: 10px; text-align: center; margin-bottom: 30px;">
-        <div style="font-size: 50px;">👨‍💻</div>
-        <h2 style="margin: 15px 0 25px;">Developed By</h2>
-
-        <div style="display: flex; justify-content: center; gap: 20px; flex-wrap: wrap;">
-
-            <!-- Developer 1 -->
-            <div style="background: rgba(255,255,255,0.1); padding: 20px 30px; border-radius: 10px; min-width: 180px;">
-                <div style="font-size: 35px;">👨‍🎓</div>
-                <h3 style="font-size: 18px; margin: 10px 0 5px;">Shivnandan Kumar</h3>
-                <p style="color: #aac4e8; font-size: 13px;">BCA Final Year</p>
-            </div>
-
-            <!-- Developer 2 -->
-            <div style="background: rgba(255,255,255,0.1); padding: 20px 30px; border-radius: 10px; min-width: 180px;">
-                <div style="font-size: 35px;">👨‍🎓</div>
-                <h3 style="font-size: 18px; margin: 10px 0 5px;">Nandkishor Thakur</h3>
-                <p style="color: #aac4e8; font-size: 13px;">BCA Final Year</p>
-            </div>
-
-            <!-- Developer 3 -->
-            <div style="background: rgba(255,255,255,0.1); padding: 20px 30px; border-radius: 10px; min-width: 180px;">
-                <div style="font-size: 35px;">👨‍🎓</div>
-                <h3 style="font-size: 18px; margin: 10px 0 5px;">Ankit Vishwakarma</h3>
-                <p style="color: #aac4e8; font-size: 13px;">BCA Final Year</p>
-            </div>
-
+    <section class="about-section">
+        <div class="about-section-header">
+            <span>Features</span>
+            <h2>What citizens and admins can do</h2>
         </div>
 
-        <p style="color: #aac4e8; margin-top: 20px; font-size: 15px;">
-            🎓 BCA Final Year Group Project
-        </p>
-    </div>
+        <div class="about-grid">
+            <div class="about-feature">
+                <div class="about-icon">01</div>
+                <h3>Online Complaint Submission</h3>
+                <p>Citizens can submit complaint details and supporting files from the portal.</p>
+            </div>
 
+            <div class="about-feature">
+                <div class="about-icon">02</div>
+                <h3>Real-Time Status Tracking</h3>
+                <p>Users can check whether a complaint is pending, in progress, or resolved.</p>
+            </div>
+
+            <div class="about-feature">
+                <div class="about-icon">03</div>
+                <h3>Role-Based Access</h3>
+                <p>Citizens and administrators get separate access based on their work.</p>
+            </div>
+
+            <div class="about-feature">
+                <div class="about-icon">04</div>
+                <h3>Admin Dashboard</h3>
+                <p>Admins can review complaints, update status, and manage user feedback.</p>
+            </div>
+        </div>
+    </section>
+
+    <section class="about-section">
+        <div class="about-two-column">
+            <div>
+                <div class="about-section-header">
+                    <span>Workflow</span>
+                    <h2>Simple complaint process</h2>
+                </div>
+
+                <div class="about-steps">
+                    <div class="about-step">
+                        <div class="about-step-number">1</div>
+                        <div>
+                            <h3>Register or login</h3>
+                            <p>Create an account or login to access complaint services.</p>
+                        </div>
+                    </div>
+
+                    <div class="about-step">
+                        <div class="about-step-number">2</div>
+                        <div>
+                            <h3>Submit complaint</h3>
+                            <p>Add the issue, category, location, description, and file if needed.</p>
+                        </div>
+                    </div>
+
+                    <div class="about-step">
+                        <div class="about-step-number">3</div>
+                        <div>
+                            <h3>Track updates</h3>
+                            <p>Follow status changes from the dashboard until the complaint is resolved.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="about-developer-card">
+                <div>
+                    <div class="about-avatar">SK</div>
+                    <span class="about-kicker">Developed by</span>
+                    <h2>Shivnandan Kumar</h2>
+                    <p>
+                        Built with focus on clear complaint tracking, simple user flow,
+                        and practical admin management.
+                    </p>
+                </div>
+                <span class="about-role">Portal Developer</span>
+            </div>
+        </div>
+    </section>
+
+    <section class="about-section">
+        <div class="about-section-header">
+            <span>Technology</span>
+            <h2>Technology used in this portal</h2>
+        </div>
+
+        <div class="about-grid">
+            <div class="about-tech">
+                <div class="about-icon">PY</div>
+                <h3>Python</h3>
+                <p>Main programming language used for backend logic.</p>
+            </div>
+
+            <div class="about-tech">
+                <div class="about-icon">FL</div>
+                <h3>Flask</h3>
+                <p>Web framework used to create routes and render pages.</p>
+            </div>
+
+            <div class="about-tech">
+                <div class="about-icon">DB</div>
+                <h3>Database</h3>
+                <p>Stores users, complaints, timelines, and feedback records.</p>
+            </div>
+
+            <div class="about-tech">
+                <div class="about-icon">UI</div>
+                <h3>HTML & CSS</h3>
+                <p>Used for page structure, layout, and responsive user interface.</p>
+            </div>
+        </div>
+    </section>
 </div>
 
 {% endblock %}
