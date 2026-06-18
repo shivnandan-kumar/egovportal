@@ -3,7 +3,6 @@
 
 from flask import Flask, render_template, redirect, url_for, flash, request, session
 from werkzeug.security import generate_password_hash, check_password_hash
-import sqlite3
 import os
 
 app = Flask(__name__)
@@ -29,23 +28,17 @@ def allowed_file(filename):
 # DATABASE SETUP FUNCTION
 # ----------------------------------------
 import psycopg2
-import os
 
 def get_db_connection():
-    db_url = os.environ.get('DATABASE_URL')
-    
-    if db_url:
-        # Render/Python fix: string ko postgresql:// mein badalna zaroori hai
-        if db_url.startswith("postgres://"):
-            db_url = db_url.replace("postgres://", "postgresql://", 1)
-        
-        # Supabase Connection Pooler compatibility bypass ke sath connect karein
-        conn = psycopg2.connect(db_url)
-    else:
-        # Local laptop ke liye purana fallback link
-        fallback_url = "postgresql://egov_portal_qczh_user:apka_password@hostname/egov_portal_qczh"
-        conn = psycopg2.connect(fallback_url)
-        
+    db_url = os.environ.get("DATABASE_URL")
+
+    if not db_url:
+        raise Exception("DATABASE_URL environment variable is not set")
+
+    if db_url.startswith("postgres://"):
+        db_url = db_url.replace("postgres://", "postgresql://", 1)
+
+    conn = psycopg2.connect(db_url, sslmode="require")
     return conn
 
 def init_db():
